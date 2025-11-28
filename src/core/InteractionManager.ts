@@ -24,6 +24,10 @@ export class InteractionManager {
         this.stands.push(stand);
     }
 
+    public setCharacter(character: THREE.Object3D): void {
+        this.character = character;
+    }
+
     public update(): void {
         let closestDist = Infinity;
         let closestStand: DisplayStand | null = null;

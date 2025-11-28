@@ -34,6 +34,13 @@ export class PhysicsSystem {
     }
 
     /**
+     * Remove an object from the physics system
+     */
+    public removeObject(mesh: THREE.Object3D): void {
+        this.objects = this.objects.filter(o => o.mesh !== mesh);
+    }
+
+    /**
      * Update physics simulation
      */
     public update(delta: number): void {

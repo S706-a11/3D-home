@@ -2,7 +2,7 @@ import './style.css';
 import { Scene } from './core/Scene';
 import { DisplayStand } from './models/DisplayStand';
 import { InteractionManager } from './core/InteractionManager';
-// import { ModelLoader } from './utils/ModelLoader';
+import { ModelLoader } from './utils/ModelLoader';
 import { CharacterController } from './models/CharacterController';
 import { CameraFollower } from './utils/CameraFollower';
 import { PhysicsSystem } from './core/PhysicsSystem';
@@ -115,7 +115,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 // Initialize character controller
-const characterController = new CharacterController(characterMesh, scene.getCamera(), 5, 5);
+let characterController = new CharacterController(characterMesh, scene.getCamera(), 5, 5);
 
 // Initialize Interaction Manager
 const interactionManager = new InteractionManager(scene.getCamera(), characterMesh);
@@ -259,35 +259,47 @@ setTimeout(() => {
 }, 1000);
 
 // Example of how to load a GLTF model (commented out - uncomment when you have a model)
-/*
 const modelLoader = new ModelLoader((progress) => {
   console.log('Loading progress:', progress);
 });
 
-modelLoader.load('/models/your-model.glb')
-  .then((gltf) => {
-    const model = gltf.scene;
-    model.position.set(0, 0, 0);
-    scene.add(model);
-    
-    // If the model has animations
-    if (gltf.animations.length > 0) {
-      characterController.setupAnimations(gltf.animations);
-      characterController.playAnimation('idle');
+modelLoader.load('/models/GLB format/character-male-a.glb', (gltf) => {
+  console.log('Character loaded!');
+  const model = gltf.scene;
+
+  // Enable shadows
+  model.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.castShadow = true;
+      child.receiveShadow = true;
     }
-    
-    // Replace the cube with the loaded model
-    scene.remove(characterMesh);
-    const newController = new CharacterController(model, 5, 5);
-    
-    scene.onAnimate((delta) => {
-      newController.update(delta);
-    });
-  })
-  .catch((error) => {
-    console.error('Failed to load model:', error);
   });
-*/
+
+  // Position model
+  model.position.copy(characterMesh.position);
+
+  // Remove old character
+  scene.remove(characterMesh);
+  physicsSystem.removeObject(characterMesh);
+
+  // Add new model
+  scene.add(model);
+  physicsSystem.addObject(model, 100, 0.5, false, true);
+
+  // Update Controller
+  characterController.dispose();
+  characterController = new CharacterController(model, scene.getCamera(), 5, 5);
+
+  // Setup Animations
+  if (gltf.animations.length > 0) {
+    characterController.setupAnimations(gltf.animations);
+    characterController.playAnimation('idle');
+  }
+
+  // Update dependencies
+  cameraFollower.setTarget(model);
+  interactionManager.setCharacter(model);
+});
 
 console.log('🎮 Three.js scene initialized!');
 console.log('📦 Use WASD or Arrow keys to move the character');
