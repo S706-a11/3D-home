@@ -102,10 +102,17 @@ export class PhysicsSystem {
             // Special case: Kinematic vs Static
             // If Kinematic hits Static, move Kinematic fully out
             if (obj1.isKinematic && obj2.isStatic) {
-                obj1.mesh.position.add(collisionNormal.clone().multiplyScalar(overlap));
+                // Flatten normal to keep character on ground
+                const flatNormal = collisionNormal.clone();
+                flatNormal.y = 0;
+                flatNormal.normalize();
+                obj1.mesh.position.add(flatNormal.multiplyScalar(overlap));
             }
             else if (obj2.isKinematic && obj1.isStatic) {
-                obj2.mesh.position.sub(collisionNormal.clone().multiplyScalar(overlap));
+                const flatNormal = collisionNormal.clone();
+                flatNormal.y = 0;
+                flatNormal.normalize();
+                obj2.mesh.position.sub(flatNormal.multiplyScalar(overlap));
             }
 
             // Impulse response
