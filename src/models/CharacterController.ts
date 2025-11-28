@@ -18,6 +18,11 @@ export class CharacterController {
     private boundKeyDown: (e: KeyboardEvent) => void;
     private boundKeyUp: (e: KeyboardEvent) => void;
 
+    private verticalVelocity: number = 0;
+    private gravity: number = -30;
+    private jumpForce: number = 12;
+    private isGrounded: boolean = true;
+
     constructor(
         character: THREE.Object3D,
         camera: THREE.Camera,
@@ -106,7 +111,7 @@ export class CharacterController {
             this.mixer.update(delta);
         }
 
-        // Reset velocity
+        // Reset horizontal velocity
         this.velocity.set(0, 0, 0);
 
         let isMoving = false;
@@ -142,6 +147,15 @@ export class CharacterController {
             isMoving = true;
         }
 
+        // Jump
+        if (this.keys['Space'] && this.isGrounded) {
+            this.verticalVelocity = this.jumpForce;
+            this.isGrounded = false;
+        }
+
+        // Apply gravity
+        this.verticalVelocity += this.gravity * delta;
+
         // Normalize velocity for consistent diagonal movement
         if (this.velocity.length() > 0) {
             this.velocity.normalize();
@@ -151,8 +165,20 @@ export class CharacterController {
         const currentSpeed = isRunning ? this.runSpeed : this.moveSpeed;
         const movement = this.velocity.clone().multiplyScalar(currentSpeed * delta);
 
+        // Add vertical movement
+        movement.y = this.verticalVelocity * delta;
+
         // Apply movement (world-relative)
         this.character.position.add(movement);
+
+        // Ground check (simple floor at y=0.5)
+        if (this.character.position.y <= 0.5) {
+            this.character.position.y = 0.5;
+            this.verticalVelocity = 0;
+            this.isGrounded = true;
+        } else {
+            this.isGrounded = false;
+        }
 
         // Rotate character to face movement direction
         if (isMoving && this.velocity.length() > 0) {
