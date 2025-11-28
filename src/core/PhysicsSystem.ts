@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 interface PhysicsObject {
-    mesh: THREE.Mesh;
+    mesh: THREE.Object3D;
     velocity: THREE.Vector3;
     mass: number;
     radius: number; // Simplified collision shape (sphere)
@@ -20,7 +20,7 @@ export class PhysicsSystem {
     /**
      * Add an object to the physics system
      */
-    public addObject(mesh: THREE.Mesh, mass: number, radius: number, isStatic: boolean = false, isKinematic: boolean = false): void {
+    public addObject(mesh: THREE.Object3D, mass: number, radius: number, isStatic: boolean = false, isKinematic: boolean = false): void {
         this.objects.push({
             mesh,
             velocity: new THREE.Vector3(0, 0, 0),
@@ -99,6 +99,15 @@ export class PhysicsSystem {
             if (!obj1.isStatic && !obj1.isKinematic) obj1.mesh.position.add(separation);
             if (!obj2.isStatic && !obj2.isKinematic) obj2.mesh.position.sub(separation);
 
+            // Special case: Kinematic vs Static
+            // If Kinematic hits Static, move Kinematic fully out
+            if (obj1.isKinematic && obj2.isStatic) {
+                obj1.mesh.position.add(collisionNormal.clone().multiplyScalar(overlap));
+            }
+            else if (obj2.isKinematic && obj1.isStatic) {
+                obj2.mesh.position.sub(collisionNormal.clone().multiplyScalar(overlap));
+            }
+
             // Impulse response
 
             // Case 1: Kinematic pushes Dynamic
@@ -136,7 +145,7 @@ export class PhysicsSystem {
     /**
      * Get object by mesh
      */
-    public getObject(mesh: THREE.Mesh): PhysicsObject | undefined {
+    public getObject(mesh: THREE.Object3D): PhysicsObject | undefined {
         return this.objects.find(o => o.mesh === mesh);
     }
 }

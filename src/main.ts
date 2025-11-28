@@ -158,6 +158,9 @@ projects.forEach((proj, index) => {
 
   scene.add(stand.getMesh());
   interactionManager.addStand(stand);
+
+  // Add to physics system as static object
+  physicsSystem.addObject(stand.getMesh(), 0, 0.8, true);
 });
 
 // Modal Close Logic
