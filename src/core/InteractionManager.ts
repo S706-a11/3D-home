@@ -24,18 +24,38 @@ export class InteractionManager {
 
     public update(): void {
         let closestDist = Infinity;
+        let closestStand: DisplayStand | null = null;
 
         for (const stand of this.stands) {
             const dist = this.character.position.distanceTo(stand.getMesh().position);
             if (dist < closestDist) {
                 closestDist = dist;
+                closestStand = stand;
             }
         }
 
         const hintEl = document.getElementById('interaction-hint');
         if (hintEl) {
-            if (closestDist <= this.interactionDistance) {
-                hintEl.classList.add('visible');
+            if (closestDist <= this.interactionDistance && closestStand) {
+                // Calculate screen position
+                const standPos = closestStand.getMesh().position.clone();
+                standPos.y += 2.5; // Float above the stand
+
+                // Project to screen
+                standPos.project(this.camera);
+
+                const x = (standPos.x * .5 + .5) * window.innerWidth;
+                const y = (standPos.y * -.5 + .5) * window.innerHeight;
+
+                // Only show if in front of camera (z < 1)
+                if (standPos.z < 1) {
+                    hintEl.style.left = '0px';
+                    hintEl.style.top = '0px';
+                    hintEl.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+                    hintEl.classList.add('visible');
+                } else {
+                    hintEl.classList.remove('visible');
+                }
             } else {
                 hintEl.classList.remove('visible');
             }
@@ -43,33 +63,25 @@ export class InteractionManager {
     }
 
     private handleClick(event: MouseEvent): void {
-        // Calculate mouse position in normalized device coordinates
-        // (-1 to +1) for both components
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
-        // Get all interactable meshes
         const interactables = this.stands.map(s => s.getInteractable());
-
         const intersects = this.raycaster.intersectObjects(interactables);
 
         if (intersects.length > 0) {
             const object = intersects[0].object;
-
-            // Find which stand this object belongs to
             const stand = this.stands.find(s => s.getInteractable() === object);
 
             if (stand) {
-                // Check distance
                 const dist = this.character.position.distanceTo(stand.getMesh().position);
 
                 if (dist <= this.interactionDistance) {
                     this.showProjectModal(stand.getData());
                 } else {
                     console.log("Too far to interact!");
-                    // Optional: Show a "Too far" toast
                 }
             }
         }
@@ -90,8 +102,6 @@ export class InteractionManager {
             link.href = data.projectUrl;
 
             modal.style.display = 'flex';
-
-            // Trigger animation
             setTimeout(() => {
                 modal.classList.add('active');
             }, 10);
