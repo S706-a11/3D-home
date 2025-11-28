@@ -3,6 +3,7 @@ import { Scene } from './core/Scene';
 // import { ModelLoader } from './utils/ModelLoader';
 import { CharacterController } from './models/CharacterController';
 import { CameraFollower } from './utils/CameraFollower';
+import { PhysicsSystem } from './core/PhysicsSystem';
 import * as THREE from 'three';
 
 // Initialize the app
@@ -31,6 +32,7 @@ const resetBtn = document.querySelector<HTMLButtonElement>('#reset-camera')!;
 
 // Initialize scene
 const scene = new Scene(container);
+const physicsSystem = new PhysicsSystem();
 
 // Create a simple ground plane
 const groundGeometry = new THREE.PlaneGeometry(20, 20);
@@ -61,6 +63,22 @@ characterMesh.castShadow = true;
 
 // Add character to scene
 scene.add(characterMesh);
+// Add character to physics (Kinematic)
+physicsSystem.addObject(characterMesh, 100, 0.5, false, true);
+
+// Create a Physics Ball
+const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const ballMaterial = new THREE.MeshStandardMaterial({
+  color: 0xff4444,
+  roughness: 0.4,
+  metalness: 0.2
+});
+const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
+ballMesh.position.set(2, 5, 0); // Start in air to test gravity
+ballMesh.castShadow = true;
+ballMesh.receiveShadow = true;
+scene.add(ballMesh);
+physicsSystem.addObject(ballMesh, 1, 0.5);
 
 // Initialize character controller
 const characterController = new CharacterController(characterMesh, scene.getCamera(), 5, 5);
@@ -79,9 +97,21 @@ resetBtn.addEventListener('click', () => {
   resetBtn.blur();
 });
 
+let lastCharPos = characterMesh.position.clone();
+
 // Update character in animation loop
 scene.onAnimate((delta) => {
   characterController.update(delta);
+
+  // Update character physics velocity (Kinematic)
+  const charPhysObj = physicsSystem.getObject(characterMesh);
+  if (charPhysObj && delta > 0) {
+    const displacement = characterMesh.position.clone().sub(lastCharPos);
+    charPhysObj.velocity.copy(displacement.divideScalar(delta));
+  }
+  lastCharPos.copy(characterMesh.position);
+
+  physicsSystem.update(delta);
   cameraFollower.update();
 });
 
