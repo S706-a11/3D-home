@@ -49,4 +49,27 @@ export class CameraFollower {
         this.target = target;
         this.lastTargetPosition.copy(this.target.position);
     }
+
+    /**
+     * Reset camera to default position behind target
+     */
+    public resetCamera(): void {
+        // Default offset: 2 units up, 4 units back
+        const defaultOffset = new THREE.Vector3(0, 2, 4);
+
+        // Apply rotation of target to offset if needed, but for now fixed relative to world is fine
+        // or relative to character facing? Let's stick to world-relative "behind" for consistency with WASD
+        // Actually, "behind" usually means behind the character's back.
+        // Since our controls are camera-relative, "behind" is relative to the camera... wait.
+        // If controls are camera relative, resetting camera to a fixed world position (e.g. South of character)
+        // is a good "reset".
+
+        const newPos = this.target.position.clone().add(defaultOffset);
+        this.camera.position.copy(newPos);
+        this.camera.lookAt(this.target.position);
+
+        // Reset controls target
+        this.controls.target.copy(this.target.position);
+        this.controls.update();
+    }
 }

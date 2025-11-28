@@ -16,6 +16,7 @@ app.innerHTML = `
     <p><strong>Shift</strong> - Sprint</p>
     <p><strong>Mouse</strong> - Rotate camera (drag)</p>
     <p><strong>Scroll</strong> - Zoom in/out</p>
+    <button id="reset-camera">Reset Camera</button>
   </div>
   <div id="loading" class="loading">
     <div class="loading-spinner"></div>
@@ -26,6 +27,7 @@ app.innerHTML = `
 // Get container element
 const container = document.querySelector<HTMLDivElement>('#canvas-container')!;
 const loadingElement = document.querySelector<HTMLDivElement>('#loading')!;
+const resetBtn = document.querySelector<HTMLButtonElement>('#reset-camera')!;
 
 // Initialize scene
 const scene = new Scene(container);
@@ -69,6 +71,13 @@ const cameraFollower = new CameraFollower(
   characterMesh,
   scene.getControls()
 );
+
+// Reset camera button
+resetBtn.addEventListener('click', () => {
+  cameraFollower.resetCamera();
+  // Remove focus from button so spacebar doesn't trigger it again
+  resetBtn.blur();
+});
 
 // Update character in animation loop
 scene.onAnimate((delta) => {
