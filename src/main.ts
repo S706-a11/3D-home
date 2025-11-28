@@ -263,9 +263,43 @@ const modelLoader = new ModelLoader((progress) => {
   console.log('Loading progress:', progress);
 });
 
-modelLoader.load('/models/GLB format/character-male-a.glb', (gltf) => {
+// Configuration
+const CHARACTER_CONFIG = {
+  modelPath: '/models/GLB format/character-male-a.glb',
+  targetHeight: 1.2, // Desired height in meters
+  manualOffset: 0.2,   // Additional Y offset (positive = up, negative = down)
+};
+
+modelLoader.load(CHARACTER_CONFIG.modelPath, (gltf) => {
   console.log('Character loaded!');
   const model = gltf.scene;
+
+  // Calculate bounding box to determine size
+  const box = new THREE.Box3().setFromObject(model);
+  const size = box.getSize(new THREE.Vector3());
+  console.log('Original Size:', size);
+
+  // Target height: 1.2m
+  const targetHeight = CHARACTER_CONFIG.targetHeight;
+  const scaleFactor = targetHeight / size.y;
+
+  model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+  // Recalculate size and radius
+  const scaledSize = size.clone().multiplyScalar(scaleFactor);
+  const radius = Math.max(scaledSize.x, scaledSize.z) / 2;
+  console.log('Scaled Size:', scaledSize, 'Radius:', radius);
+
+  // Create a container group to handle offset
+  const characterGroup = new THREE.Group();
+  characterGroup.position.copy(characterMesh.position);
+
+  // Offset model to align feet with ground
+  // Physics position is at center (y=radius), so we lower model by radius
+  // Plus any manual offset
+  model.position.y = -radius + CHARACTER_CONFIG.manualOffset;
+
+  characterGroup.add(model);
 
   // Enable shadows
   model.traverse((child) => {
@@ -275,32 +309,38 @@ modelLoader.load('/models/GLB format/character-male-a.glb', (gltf) => {
     }
   });
 
-  // Position model
-  model.position.copy(characterMesh.position);
-
   // Remove old character
   scene.remove(characterMesh);
   physicsSystem.removeObject(characterMesh);
 
-  // Add new model
-  scene.add(model);
-  physicsSystem.addObject(model, 100, 0.5, false, true);
+  // Add new character group
+  scene.add(characterGroup);
+  physicsSystem.addObject(characterGroup, 100, radius, false, true);
 
   // Update Controller
   characterController.dispose();
-  characterController = new CharacterController(model, scene.getCamera(), 5, 5);
+  characterController = new CharacterController(characterGroup, scene.getCamera(), 5, 5);
 
   // Setup Animations
+  // Note: Mixer should be on the model (which has the mesh/bones), not the group
+  // But CharacterController expects 'character' to be the root.
+  // We need to pass the model to setupAnimations? 
+  // Actually AnimationMixer on group works if tracks point to named nodes.
+  // But let's check CharacterController.setupAnimations.
+  // It does `new THREE.AnimationMixer(this.character)`.
+  // If we pass the group, it should work.
+
   if (gltf.animations.length > 0) {
     characterController.setupAnimations(gltf.animations);
     characterController.playAnimation('idle');
   }
 
   // Update dependencies
-  cameraFollower.setTarget(model);
-  interactionManager.setCharacter(model);
+  cameraFollower.setTarget(characterGroup);
+  interactionManager.setCharacter(characterGroup);
 });
 
 console.log('🎮 Three.js scene initialized!');
 console.log('📦 Use WASD or Arrow keys to move the character');
 console.log('🖱️ Drag with mouse to rotate camera, scroll to zoom');
+
