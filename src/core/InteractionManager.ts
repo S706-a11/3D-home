@@ -16,6 +16,7 @@ export class InteractionManager {
         this.character = character;
 
         window.addEventListener('click', this.handleClick.bind(this));
+        window.addEventListener('mousemove', this.handleMouseMove.bind(this));
     }
 
     public addStand(stand: DisplayStand): void {
@@ -62,7 +63,37 @@ export class InteractionManager {
         }
     }
 
+    private handleMouseMove(event: MouseEvent): void {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        this.checkHover();
+    }
+
+    private checkHover(): void {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const interactables = this.stands.map(s => s.getInteractable());
+        const intersects = this.raycaster.intersectObjects(interactables);
+
+        let hovering = false;
+
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            const stand = this.stands.find(s => s.getInteractable() === object);
+
+            if (stand) {
+                const dist = this.character.position.distanceTo(stand.getMesh().position);
+                if (dist <= this.interactionDistance) {
+                    hovering = true;
+                }
+            }
+        }
+
+        document.body.style.cursor = hovering ? 'pointer' : 'default';
+    }
+
     private handleClick(event: MouseEvent): void {
+        // Mouse position is already updated by handleMouseMove, but let's be safe
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
