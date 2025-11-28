@@ -1,5 +1,7 @@
 import './style.css';
 import { Scene } from './core/Scene';
+import { DisplayStand } from './models/DisplayStand';
+import { InteractionManager } from './core/InteractionManager';
 // import { ModelLoader } from './utils/ModelLoader';
 import { CharacterController } from './models/CharacterController';
 import { CameraFollower } from './utils/CameraFollower';
@@ -22,6 +24,23 @@ app.innerHTML = `
   <div id="loading" class="loading">
     <div class="loading-spinner"></div>
     <p>Loading Three.js Scene...</p>
+  </div>
+  
+  <!-- Project Modal -->
+  <div id="project-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="project-title">Project Title</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img id="project-image" src="" alt="Project Image">
+        <p id="project-desc">Project description goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <a id="project-link" href="#" target="_blank" class="project-link-btn">View Project</a>
+      </div>
+    </div>
   </div>
 `;
 
@@ -66,22 +85,100 @@ scene.add(characterMesh);
 // Add character to physics (Kinematic)
 physicsSystem.addObject(characterMesh, 100, 0.5, false, true);
 
-// Create a Physics Ball
+// Create 4 Physics Balls
+const ballColors = [0xff4444, 0x44ff44, 0x4444ff, 0xffff44];
 const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-const ballMaterial = new THREE.MeshStandardMaterial({
-  color: 0xff4444,
-  roughness: 0.4,
-  metalness: 0.2
-});
-const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
-ballMesh.position.set(2, 5, 0); // Start in air to test gravity
-ballMesh.castShadow = true;
-ballMesh.receiveShadow = true;
-scene.add(ballMesh);
-physicsSystem.addObject(ballMesh, 1, 0.5);
+
+for (let i = 0; i < 4; i++) {
+  const ballMaterial = new THREE.MeshStandardMaterial({
+    color: ballColors[i],
+    roughness: 0.4,
+    metalness: 0.2
+  });
+  const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
+
+  // Position in a circle
+  const angle = (i / 4) * Math.PI * 2;
+  const radius = 3;
+  ballMesh.position.set(
+    Math.cos(angle) * radius,
+    5, // Drop from height
+    Math.sin(angle) * radius
+  );
+
+  ballMesh.castShadow = true;
+  ballMesh.receiveShadow = true;
+  scene.add(ballMesh);
+  physicsSystem.addObject(ballMesh, 1, 0.5);
+}
 
 // Initialize character controller
 const characterController = new CharacterController(characterMesh, scene.getCamera(), 5, 5);
+
+// Initialize Interaction Manager
+const interactionManager = new InteractionManager(scene.getCamera(), characterMesh);
+
+// Create Display Stands
+const projects = [
+  {
+    id: 'p1',
+    title: 'Project Alpha',
+    description: 'A revolutionary AI assistant that helps you code faster.',
+    imageUrl: 'https://via.placeholder.com/400x200/4a90e2/ffffff?text=Project+Alpha',
+    projectUrl: '#'
+  },
+  {
+    id: 'p2',
+    title: 'Neon City',
+    description: 'A cyberpunk-themed 3D experience built with Three.js.',
+    imageUrl: 'https://via.placeholder.com/400x200/e94560/ffffff?text=Neon+City',
+    projectUrl: '#'
+  },
+  {
+    id: 'p3',
+    title: 'Eco Tracker',
+    description: 'Mobile app for tracking your carbon footprint.',
+    imageUrl: 'https://via.placeholder.com/400x200/44ff44/ffffff?text=Eco+Tracker',
+    projectUrl: '#'
+  }
+];
+
+projects.forEach((proj, index) => {
+  const stand = new DisplayStand(proj);
+  const angle = (index / projects.length) * Math.PI * 2;
+  const radius = 8;
+  stand.setPosition(
+    Math.cos(angle) * radius,
+    0,
+    Math.sin(angle) * radius
+  );
+  stand.setRotation(-angle + Math.PI / 2); // Face center
+
+  scene.add(stand.getMesh());
+  interactionManager.addStand(stand);
+});
+
+// Modal Close Logic
+const modal = document.getElementById('project-modal')!;
+const closeBtn = document.querySelector('.close-btn')!;
+
+if (closeBtn) {
+  closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  });
+}
+
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  }
+});
 
 // Initialize camera follower
 const cameraFollower = new CameraFollower(
@@ -137,26 +234,6 @@ const addDecorations = () => {
     cube.castShadow = true;
     cube.receiveShadow = true;
     scene.add(cube);
-  }
-
-  // Add spheres
-  const sphereGeometry = new THREE.SphereGeometry(0.3, 32, 32);
-  const sphereMaterial = new THREE.MeshStandardMaterial({
-    color: 0xf4a261,
-    roughness: 0.3,
-    metalness: 0.7
-  });
-
-  for (let i = 0; i < 3; i++) {
-    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.position.set(
-      (Math.random() - 0.5) * 8,
-      0.3,
-      (Math.random() - 0.5) * 8
-    );
-    sphere.castShadow = true;
-    sphere.receiveShadow = true;
-    scene.add(sphere);
   }
 };
 
