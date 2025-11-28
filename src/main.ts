@@ -2,6 +2,7 @@ import './style.css';
 import { Scene } from './core/Scene';
 // import { ModelLoader } from './utils/ModelLoader';
 import { CharacterController } from './models/CharacterController';
+import { CameraFollower } from './utils/CameraFollower';
 import * as THREE from 'three';
 
 // Initialize the app
@@ -62,9 +63,17 @@ scene.add(characterMesh);
 // Initialize character controller
 const characterController = new CharacterController(characterMesh, 5, 5);
 
+// Initialize camera follower
+const cameraFollower = new CameraFollower(
+  scene.getCamera(),
+  characterMesh,
+  scene.getControls()
+);
+
 // Update character in animation loop
 scene.onAnimate((delta) => {
   characterController.update(delta);
+  cameraFollower.update();
 });
 
 // Add some decorative objects
