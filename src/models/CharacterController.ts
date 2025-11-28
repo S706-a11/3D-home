@@ -171,8 +171,18 @@ export class CharacterController {
         // Apply movement (world-relative)
         this.character.position.add(movement);
 
+        // Respawn check (if fallen off map)
+        if (this.character.position.y < -10) {
+            this.character.position.set(0, 2, 0);
+            this.verticalVelocity = 0;
+            this.velocity.set(0, 0, 0);
+        }
+
         // Ground check (simple floor at y=0.5)
-        if (this.character.position.y <= 0.5) {
+        // Only if within platform bounds (20x20, so -10 to 10)
+        const onPlatform = Math.abs(this.character.position.x) < 10 && Math.abs(this.character.position.z) < 10;
+
+        if (onPlatform && this.character.position.y <= 0.5 && this.verticalVelocity <= 0) {
             this.character.position.y = 0.5;
             this.verticalVelocity = 0;
             this.isGrounded = true;

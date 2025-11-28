@@ -45,9 +45,13 @@ export class PhysicsSystem {
 
             // Apply gravity (simple ground collision)
             // Assuming ground is at y=0
-            if (obj.mesh.position.y > obj.radius) {
+            const onPlatform = Math.abs(obj.mesh.position.x) < 10 && Math.abs(obj.mesh.position.z) < 10;
+
+            if (!onPlatform || obj.mesh.position.y > obj.radius) {
                 obj.velocity.y -= this.gravity * delta;
-            } else {
+            }
+
+            if (onPlatform && obj.mesh.position.y <= obj.radius) {
                 // Ground collision
                 if (obj.velocity.y < 0) {
                     obj.velocity.y = -obj.velocity.y * obj.restitution;
@@ -67,8 +71,14 @@ export class PhysicsSystem {
             // Update position
             obj.mesh.position.add(obj.velocity.clone().multiplyScalar(delta));
 
+            // Respawn check
+            if (obj.mesh.position.y < -10) {
+                obj.mesh.position.set(0, 5, 0);
+                obj.velocity.set(0, 0, 0);
+            }
+
             // Ground constraint
-            if (obj.mesh.position.y < obj.radius) {
+            if (onPlatform && obj.mesh.position.y < obj.radius) {
                 obj.mesh.position.y = obj.radius;
             }
         }
