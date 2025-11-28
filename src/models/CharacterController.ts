@@ -140,13 +140,14 @@ export class CharacterController {
         const movement = this.velocity.clone().multiplyScalar(currentSpeed * delta);
 
         // Apply rotation to movement direction
-        movement.applyQuaternion(this.character.quaternion);
+        // movement.applyQuaternion(this.character.quaternion); // Removed for world-relative movement
         this.character.position.add(movement);
 
         // Rotate character to face movement direction
         if (isMoving && this.velocity.length() > 0) {
             const targetQuaternion = new THREE.Quaternion();
-            const targetDirection = this.velocity.clone().applyQuaternion(this.character.quaternion);
+            // Velocity is now world-relative, so we use it directly for rotation target
+            const targetDirection = this.velocity.clone();
             const targetAngle = Math.atan2(targetDirection.x, targetDirection.z);
             targetQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), targetAngle);
 
