@@ -47,16 +47,16 @@ export class CharacterController {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        this.keys[e.key.toLowerCase()] = true;
+        this.keys[e.code] = true;
 
         // Prevent default scrolling for arrow keys and space
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
             e.preventDefault();
         }
     }
 
     private handleKeyUp(e: KeyboardEvent): void {
-        this.keys[e.key.toLowerCase()] = false;
+        this.keys[e.code] = false;
     }
 
     /**
@@ -110,7 +110,7 @@ export class CharacterController {
         this.velocity.set(0, 0, 0);
 
         let isMoving = false;
-        let isRunning = this.keys['shift'];
+        let isRunning = this.keys['ShiftLeft'] || this.keys['ShiftRight'];
 
         // Get camera forward and right vectors projected to XZ plane
         const forward = new THREE.Vector3();
@@ -123,21 +123,21 @@ export class CharacterController {
         right.normalize();
 
         // Forward/Backward movement
-        if (this.keys['w'] || this.keys['arrowup']) {
+        if (this.keys['KeyW'] || this.keys['ArrowUp']) {
             this.velocity.add(forward);
             isMoving = true;
         }
-        if (this.keys['s'] || this.keys['arrowdown']) {
+        if (this.keys['KeyS'] || this.keys['ArrowDown']) {
             this.velocity.sub(forward);
             isMoving = true;
         }
 
         // Left/Right movement (strafing)
-        if (this.keys['a'] || this.keys['arrowleft']) {
+        if (this.keys['KeyA'] || this.keys['ArrowLeft']) {
             this.velocity.sub(right);
             isMoving = true;
         }
-        if (this.keys['d'] || this.keys['arrowright']) {
+        if (this.keys['KeyD'] || this.keys['ArrowRight']) {
             this.velocity.add(right);
             isMoving = true;
         }
