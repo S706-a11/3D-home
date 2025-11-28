@@ -3,16 +3,13 @@ import * as THREE from 'three';
 /**
  * Character controller for handling player/character movement
  * Supports keyboard input, smooth movement, and animation integration
-import * as THREE from 'three';
-
-/**
- * Character controller for handling player/character movement
- * Supports keyboard input, smooth movement, and animation integration
  */
 export class CharacterController {
     private character: THREE.Object3D;
+    private camera: THREE.Camera;
     private velocity: THREE.Vector3;
     private moveSpeed: number;
+    private runSpeed: number;
     private rotationSpeed: number;
     private keys: { [key: string]: boolean } = {};
     private mixer?: THREE.AnimationMixer;
@@ -20,10 +17,15 @@ export class CharacterController {
     private currentAnimation?: THREE.AnimationAction;
     private boundKeyDown: (e: KeyboardEvent) => void;
     private boundKeyUp: (e: KeyboardEvent) => void;
-    private runSpeed: number;
 
-    constructor(character: THREE.Object3D, moveSpeed: number = 5, rotationSpeed: number = 3) {
+    constructor(
+        character: THREE.Object3D,
+        camera: THREE.Camera,
+        moveSpeed: number = 5,
+        rotationSpeed: number = 3
+    ) {
         this.character = character;
+        this.camera = camera;
         this.velocity = new THREE.Vector3();
         this.moveSpeed = moveSpeed;
         this.runSpeed = moveSpeed * 2; // Run 2x faster
@@ -110,23 +112,33 @@ export class CharacterController {
         let isMoving = false;
         let isRunning = this.keys['shift'];
 
+        // Get camera forward and right vectors projected to XZ plane
+        const forward = new THREE.Vector3();
+        this.camera.getWorldDirection(forward);
+        forward.y = 0;
+        forward.normalize();
+
+        const right = new THREE.Vector3();
+        right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+        right.normalize();
+
         // Forward/Backward movement
         if (this.keys['w'] || this.keys['arrowup']) {
-            this.velocity.z -= 1;
+            this.velocity.add(forward);
             isMoving = true;
         }
         if (this.keys['s'] || this.keys['arrowdown']) {
-            this.velocity.z += 1;
+            this.velocity.sub(forward);
             isMoving = true;
         }
 
         // Left/Right movement (strafing)
         if (this.keys['a'] || this.keys['arrowleft']) {
-            this.velocity.x -= 1;
+            this.velocity.sub(right);
             isMoving = true;
         }
         if (this.keys['d'] || this.keys['arrowright']) {
-            this.velocity.x += 1;
+            this.velocity.add(right);
             isMoving = true;
         }
 
@@ -139,8 +151,7 @@ export class CharacterController {
         const currentSpeed = isRunning ? this.runSpeed : this.moveSpeed;
         const movement = this.velocity.clone().multiplyScalar(currentSpeed * delta);
 
-        // Apply rotation to movement direction
-        // movement.applyQuaternion(this.character.quaternion); // Removed for world-relative movement
+        // Apply movement (world-relative)
         this.character.position.add(movement);
 
         // Rotate character to face movement direction

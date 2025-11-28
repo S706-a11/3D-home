@@ -61,7 +61,7 @@ characterMesh.castShadow = true;
 scene.add(characterMesh);
 
 // Initialize character controller
-const characterController = new CharacterController(characterMesh, 5, 5);
+const characterController = new CharacterController(characterMesh, scene.getCamera(), 5, 5);
 
 // Initialize camera follower
 const cameraFollower = new CameraFollower(
