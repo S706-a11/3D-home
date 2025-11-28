@@ -11,7 +11,7 @@ export interface ProjectData {
 export class DisplayStand {
     private mesh: THREE.Group;
     private data: ProjectData;
-    private interactableMesh!: THREE.Mesh; // The specific part to click
+    private interactableMesh!: THREE.Mesh;
 
     constructor(data: ProjectData) {
         this.data = data;
@@ -28,7 +28,7 @@ export class DisplayStand {
             metalness: 0.8
         });
         const base = new THREE.Mesh(baseGeo, baseMat);
-        base.position.y = 0.6; // Half height
+        base.position.y = 0.6;
         base.castShadow = true;
         base.receiveShadow = true;
         this.mesh.add(base);
@@ -42,30 +42,49 @@ export class DisplayStand {
         });
         const display = new THREE.Mesh(displayGeo, displayMat);
         display.position.set(0, 1.25, 0);
-        display.rotation.x = Math.PI / 6; // 30 degrees tilt
+        display.rotation.x = Math.PI / 6;
         display.castShadow = true;
         this.mesh.add(display);
 
-        // 3. "Screen" or "Paper" (The interactable part)
+        // 3. Screen with Text Texture
         const screenGeo = new THREE.PlaneGeometry(0.9, 0.7);
+        const texture = this.createTextTexture(this.data.title);
+
         const screenMat = new THREE.MeshStandardMaterial({
-            color: 0xecf0f1, // Paper white
-            emissive: 0xbdc3c7,
-            emissiveIntensity: 0.2,
+            map: texture,
             roughness: 0.8,
             metalness: 0.1,
             side: THREE.DoubleSide
         });
         this.interactableMesh = new THREE.Mesh(screenGeo, screenMat);
-        // Position slightly above the display surface to avoid z-fighting
         this.interactableMesh.position.set(0, 0.06, 0);
-        this.interactableMesh.rotation.x = -Math.PI / 2; // Lay flat on the box
+        this.interactableMesh.rotation.x = -Math.PI / 2;
 
-        // Add screen to display group so it rotates with it
         display.add(this.interactableMesh);
+    }
 
-        // Add a simple text label (optional, or just color code)
-        // For now, the screen color indicates it's active
+    private createTextTexture(text: string): THREE.CanvasTexture {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 256;
+        const context = canvas.getContext('2d');
+
+        if (context) {
+            context.fillStyle = '#ecf0f1';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.font = 'bold 60px Arial';
+            context.fillStyle = '#2c3e50';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+            context.strokeStyle = '#bdc3c7';
+            context.lineWidth = 20;
+            context.strokeRect(0, 0, canvas.width, canvas.height);
+        }
+
+        return new THREE.CanvasTexture(canvas);
     }
 
     public getMesh(): THREE.Group {

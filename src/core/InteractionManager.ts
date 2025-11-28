@@ -22,6 +22,26 @@ export class InteractionManager {
         this.stands.push(stand);
     }
 
+    public update(): void {
+        let closestDist = Infinity;
+
+        for (const stand of this.stands) {
+            const dist = this.character.position.distanceTo(stand.getMesh().position);
+            if (dist < closestDist) {
+                closestDist = dist;
+            }
+        }
+
+        const hintEl = document.getElementById('interaction-hint');
+        if (hintEl) {
+            if (closestDist <= this.interactionDistance) {
+                hintEl.classList.add('visible');
+            } else {
+                hintEl.classList.remove('visible');
+            }
+        }
+    }
+
     private handleClick(event: MouseEvent): void {
         // Calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components

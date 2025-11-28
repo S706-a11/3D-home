@@ -26,6 +26,8 @@ app.innerHTML = `
     <p>Loading Three.js Scene...</p>
   </div>
   
+  <div id="interaction-hint">Click to View</div>
+
   <!-- Project Modal -->
   <div id="project-modal">
     <div class="modal-content">
@@ -210,6 +212,7 @@ scene.onAnimate((delta) => {
 
   physicsSystem.update(delta);
   cameraFollower.update();
+  interactionManager.update();
 });
 
 // Add some decorative objects
