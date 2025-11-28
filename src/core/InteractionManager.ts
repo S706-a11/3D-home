@@ -8,6 +8,7 @@ export class InteractionManager {
     private character: THREE.Object3D;
     private stands: DisplayStand[] = [];
     private interactionDistance: number = 3.0;
+    private hoveredStand: DisplayStand | null = null;
 
     constructor(camera: THREE.Camera, character: THREE.Object3D) {
         this.raycaster = new THREE.Raycaster();
@@ -75,7 +76,7 @@ export class InteractionManager {
         const interactables = this.stands.map(s => s.getInteractable());
         const intersects = this.raycaster.intersectObjects(interactables);
 
-        let hovering = false;
+        let newHoveredStand: DisplayStand | null = null;
 
         if (intersects.length > 0) {
             const object = intersects[0].object;
@@ -84,16 +85,26 @@ export class InteractionManager {
             if (stand) {
                 const dist = this.character.position.distanceTo(stand.getMesh().position);
                 if (dist <= this.interactionDistance) {
-                    hovering = true;
+                    newHoveredStand = stand;
                 }
             }
         }
 
-        document.body.style.cursor = hovering ? 'pointer' : 'default';
+        // Handle highlight change
+        if (this.hoveredStand !== newHoveredStand) {
+            if (this.hoveredStand) {
+                this.hoveredStand.setHighlight(false);
+            }
+            if (newHoveredStand) {
+                newHoveredStand.setHighlight(true);
+            }
+            this.hoveredStand = newHoveredStand;
+        }
+
+        document.body.style.cursor = this.hoveredStand ? 'pointer' : 'default';
     }
 
     private handleClick(event: MouseEvent): void {
-        // Mouse position is already updated by handleMouseMove, but let's be safe
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 

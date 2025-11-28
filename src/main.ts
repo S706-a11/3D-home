@@ -26,7 +26,7 @@ app.innerHTML = `
     <p>Loading Three.js Scene...</p>
   </div>
   
-  <div id="interaction-hint">Click to View</div>
+
 
   <!-- Project Modal -->
   <div id="project-modal">
@@ -162,6 +162,11 @@ projects.forEach((proj, index) => {
   // Add to physics system as static object
   physicsSystem.addObject(stand.getMesh(), 0, 0.8, true);
 });
+
+const hint = document.createElement('div');
+hint.id = 'interaction-hint';
+hint.innerHTML = '<span class="hint-text">Click to View</span>';
+document.body.appendChild(hint);
 
 // Modal Close Logic
 const modal = document.getElementById('project-modal')!;

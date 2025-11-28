@@ -54,7 +54,9 @@ export class DisplayStand {
             map: texture,
             roughness: 0.8,
             metalness: 0.1,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            emissive: 0x000000,
+            emissiveIntensity: 0
         });
         this.interactableMesh = new THREE.Mesh(screenGeo, screenMat);
         this.interactableMesh.position.set(0, 0.06, 0);
@@ -105,5 +107,16 @@ export class DisplayStand {
 
     public setRotation(y: number): void {
         this.mesh.rotation.y = y;
+    }
+
+    public setHighlight(active: boolean): void {
+        const mat = this.interactableMesh.material as THREE.MeshStandardMaterial;
+        if (active) {
+            mat.emissive.setHex(0x3498db); // Blue glow
+            mat.emissiveIntensity = 0.5;
+        } else {
+            mat.emissive.setHex(0x000000);
+            mat.emissiveIntensity = 0;
+        }
     }
 }
