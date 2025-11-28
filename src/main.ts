@@ -33,7 +33,7 @@ app.innerHTML = `
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="project-title">Project Title</h2>
-        <button class="close-btn">&times;</button>
+        <button id="close-modal" class="close-btn">&times;</button>
       </div>
       <div class="modal-body">
         <img id="project-image" src="" alt="Project Image">
@@ -45,6 +45,12 @@ app.innerHTML = `
     </div>
   </div>
 `;
+
+// Create credits element dynamically to ensure visibility
+const credits = document.createElement('div');
+credits.id = 'credits';
+credits.innerHTML = 'Assets by <a href="https://kenney.nl" target="_blank">Kenney</a>';
+document.body.appendChild(credits);
 
 // Get container element
 const container = document.querySelector<HTMLDivElement>('#canvas-container')!;
