@@ -3,6 +3,11 @@ import * as THREE from 'three';
 /**
  * Character controller for handling player/character movement
  * Supports keyboard input, smooth movement, and animation integration
+import * as THREE from 'three';
+
+/**
+ * Character controller for handling player/character movement
+ * Supports keyboard input, smooth movement, and animation integration
  */
 export class CharacterController {
     private character: THREE.Object3D;
@@ -13,12 +18,20 @@ export class CharacterController {
     private mixer?: THREE.AnimationMixer;
     private animations: Map<string, THREE.AnimationAction> = new Map();
     private currentAnimation?: THREE.AnimationAction;
+    private boundKeyDown: (e: KeyboardEvent) => void;
+    private boundKeyUp: (e: KeyboardEvent) => void;
+    private runSpeed: number;
 
     constructor(character: THREE.Object3D, moveSpeed: number = 5, rotationSpeed: number = 3) {
         this.character = character;
         this.velocity = new THREE.Vector3();
         this.moveSpeed = moveSpeed;
+        this.runSpeed = moveSpeed * 2; // Run 2x faster
         this.rotationSpeed = rotationSpeed;
+
+        // Bind methods to preserve 'this' context and allow removal
+        this.boundKeyDown = this.handleKeyDown.bind(this);
+        this.boundKeyUp = this.handleKeyUp.bind(this);
 
         this.setupKeyboardControls();
     }
@@ -27,13 +40,21 @@ export class CharacterController {
      * Setup keyboard event listeners
      */
     private setupKeyboardControls(): void {
-        window.addEventListener('keydown', (e) => {
-            this.keys[e.key.toLowerCase()] = true;
-        });
+        window.addEventListener('keydown', this.boundKeyDown);
+        window.addEventListener('keyup', this.boundKeyUp);
+    }
 
-        window.addEventListener('keyup', (e) => {
-            this.keys[e.key.toLowerCase()] = false;
-        });
+    private handleKeyDown(e: KeyboardEvent): void {
+        this.keys[e.key.toLowerCase()] = true;
+
+        // Prevent default scrolling for arrow keys and space
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+            e.preventDefault();
+        }
+    }
+
+    private handleKeyUp(e: KeyboardEvent): void {
+        this.keys[e.key.toLowerCase()] = false;
     }
 
     /**
@@ -87,6 +108,7 @@ export class CharacterController {
         this.velocity.set(0, 0, 0);
 
         let isMoving = false;
+        let isRunning = this.keys['shift'];
 
         // Forward/Backward movement
         if (this.keys['w'] || this.keys['arrowup']) {
@@ -114,7 +136,8 @@ export class CharacterController {
         }
 
         // Apply movement
-        const movement = this.velocity.clone().multiplyScalar(this.moveSpeed * delta);
+        const currentSpeed = isRunning ? this.runSpeed : this.moveSpeed;
+        const movement = this.velocity.clone().multiplyScalar(currentSpeed * delta);
 
         // Apply rotation to movement direction
         movement.applyQuaternion(this.character.quaternion);
@@ -130,14 +153,19 @@ export class CharacterController {
             this.character.quaternion.slerp(targetQuaternion, this.rotationSpeed * delta);
         }
 
-        // Auto-switch between idle and walk animations if available
+        // Auto-switch between idle, walk, and run animations if available
         if (this.animations.size > 0) {
             if (isMoving) {
-                if (this.animations.has('walk') || this.animations.has('Walk')) {
-                    const walkAnim = this.animations.get('walk') || this.animations.get('Walk');
-                    if (this.currentAnimation !== walkAnim) {
-                        this.playAnimation('walk');
-                    }
+                const animName = isRunning ? 'run' : 'walk';
+                // Fallback to walk if run doesn't exist
+                const targetAnimName = (isRunning && !this.animations.has('run') && !this.animations.has('Run')) ? 'walk' : animName;
+
+                // Try to find animation with various casing
+                let targetAnim = this.animations.get(targetAnimName) ||
+                    this.animations.get(targetAnimName.charAt(0).toUpperCase() + targetAnimName.slice(1));
+
+                if (targetAnim && this.currentAnimation !== targetAnim) {
+                    this.playAnimation(targetAnimName);
                 }
             } else {
                 if (this.animations.has('idle') || this.animations.has('Idle')) {
@@ -176,6 +204,7 @@ export class CharacterController {
      */
     public setMoveSpeed(speed: number): void {
         this.moveSpeed = speed;
+        this.runSpeed = speed * 2;
     }
 
     /**
@@ -189,8 +218,8 @@ export class CharacterController {
      * Cleanup resources
      */
     public dispose(): void {
-        window.removeEventListener('keydown', () => { });
-        window.removeEventListener('keyup', () => { });
+        window.removeEventListener('keydown', this.boundKeyDown);
+        window.removeEventListener('keyup', this.boundKeyUp);
         if (this.mixer) {
             this.mixer.stopAllAction();
         }

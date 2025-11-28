@@ -1,6 +1,6 @@
 import './style.css';
 import { Scene } from './core/Scene';
-import { ModelLoader } from './utils/ModelLoader';
+// import { ModelLoader } from './utils/ModelLoader';
 import { CharacterController } from './models/CharacterController';
 import * as THREE from 'three';
 
@@ -12,6 +12,7 @@ app.innerHTML = `
   <div id="controls-info">
     <h2>Controls</h2>
     <p><strong>WASD</strong> or <strong>Arrow Keys</strong> - Move character</p>
+    <p><strong>Shift</strong> - Sprint</p>
     <p><strong>Mouse</strong> - Rotate camera (drag)</p>
     <p><strong>Scroll</strong> - Zoom in/out</p>
   </div>
