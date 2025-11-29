@@ -20,27 +20,42 @@ export class DisplayStand {
     }
 
     private createGeometry(): void {
-        // 1. Glass Backing (Floating Billboard)
-        const glassGeo = new THREE.BoxGeometry(4.2, 2.7, 0.1);
+        // 1. Glass Backing (Floating Billboard) - Larger size
+        const glassGeo = new THREE.BoxGeometry(6.2, 4.2, 0.1);
         const glassMat = new THREE.MeshPhysicalMaterial({
             color: 0x88ccff,
             metalness: 0.1,
             roughness: 0.1,
-            transmission: 0.6, // Glass-like
+            transmission: 1, // Glass-like
             thickness: 0.5,
             transparent: true,
-            opacity: 0.8
+            opacity: 1
         });
         const glassPanel = new THREE.Mesh(glassGeo, glassMat);
         glassPanel.castShadow = true;
         this.mesh.add(glassPanel);
 
-        // 2. Screen with Text Texture
-        const screenGeo = new THREE.PlaneGeometry(4, 2.5);
-        const texture = this.createTextTexture(this.data.title);
+        // 2. Screen with Project Image
+        const screenGeo = new THREE.PlaneGeometry(6, 4);
+
+        // Load actual project image
+        const textureLoader = new THREE.TextureLoader();
+        const imageTexture = textureLoader.load(
+            this.data.imageUrl,
+            // onLoad callback
+            () => {
+                console.log(`Loaded image: ${this.data.title}`);
+            },
+            // onProgress callback
+            undefined,
+            // onError callback
+            (error) => {
+                console.error(`Error loading image for ${this.data.title}:`, error);
+            }
+        );
 
         const screenMat = new THREE.MeshStandardMaterial({
-            map: texture,
+            map: imageTexture,
             roughness: 0.4,
             metalness: 0.1,
             side: THREE.FrontSide,
@@ -51,30 +66,6 @@ export class DisplayStand {
         this.interactableMesh.position.set(0, 0, 0.06); // Slightly in front of glass
 
         this.mesh.add(this.interactableMesh);
-    }
-
-    private createTextTexture(text: string): THREE.CanvasTexture {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 256;
-        const context = canvas.getContext('2d');
-
-        if (context) {
-            context.fillStyle = '#ecf0f1';
-            context.fillRect(0, 0, canvas.width, canvas.height);
-
-            context.font = 'bold 60px Arial';
-            context.fillStyle = '#2c3e50';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(text, canvas.width / 2, canvas.height / 2);
-
-            context.strokeStyle = '#bdc3c7';
-            context.lineWidth = 20;
-            context.strokeRect(0, 0, canvas.width, canvas.height);
-        }
-
-        return new THREE.CanvasTexture(canvas);
     }
 
     public getMesh(): THREE.Group {
