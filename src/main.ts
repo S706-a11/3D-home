@@ -28,6 +28,30 @@ app.innerHTML = `
     <button id="mute-btn" title="Toggle Sound">🔇</button>
     <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" title="Volume">
   </div>
+  
+  <div id="avatar-container">
+    <button id="avatar-icon-btn" title="Choose Avatar">👤</button>
+    <div id="avatar-dropdown">
+      <div class="avatar-category">Male</div>
+      <button class="avatar-option" data-model="character-male-a.glb">Male A</button>
+      <button class="avatar-option" data-model="character-male-b.glb">Male B</button>
+      <button class="avatar-option" data-model="character-male-c.glb">Male C</button>
+      <button class="avatar-option" data-model="character-male-d.glb">Male D</button>
+      <button class="avatar-option" data-model="character-male-e.glb">Male E</button>
+      <button class="avatar-option" data-model="character-male-f.glb">Male F</button>
+      
+      <div class="avatar-category">Female</div>
+      <button class="avatar-option" data-model="character-female-a.glb">Female A</button>
+      <button class="avatar-option" data-model="character-female-b.glb">Female B</button>
+      <button class="avatar-option" data-model="character-female-c.glb">Female C</button>
+      <button class="avatar-option" data-model="character-female-d.glb">Female D</button>
+      <button class="avatar-option" data-model="character-female-e.glb">Female E</button>
+      <button class="avatar-option" data-model="character-female-f.glb">Female F</button>
+      
+      <div class="avatar-category">Other</div>
+      <button class="avatar-option" data-model="wheelchair.glb">Wheelchair</button>
+    </div>
+  </div>
 
   <div id="loading" class="loading">
     <div class="loading-spinner"></div>
@@ -57,7 +81,7 @@ app.innerHTML = `
 // Create credits element dynamically to ensure visibility
 const credits = document.createElement('div');
 credits.id = 'credits';
-credits.innerHTML = 'Assets by <a href="https://kenney.nl" target="_blank">Kenney</a>';
+credits.innerHTML = 'Assets by <a href="https://kenney.nl" target="_blank">Kenney</a> • Skybox by <a href="https://polyhaven.com" target="_blank">Poly Haven</a>';
 document.body.appendChild(credits);
 
 // Get container element
@@ -298,89 +322,134 @@ setTimeout(() => {
   }, 500);
 }, 1000);
 
-// Example of how to load a GLTF model (commented out - uncomment when you have a model)
+// Example of how to load a GLTF model
 const modelLoader = new ModelLoader((progress) => {
   console.log('Loading progress:', progress);
 });
 
-// Configuration
-const CHARACTER_CONFIG = {
-  modelPath: '/models/GLB format/character-male-a.glb',
-  targetHeight: 1.2, // Desired height in meters
-  manualOffset: 0.2,   // Additional Y offset (positive = up, negative = down)
-};
+// Track current character group to remove it when switching
+let currentCharacterGroup: THREE.Object3D | null = null;
 
-modelLoader.load(CHARACTER_CONFIG.modelPath, (gltf) => {
-  console.log('Character loaded!');
-  const model = gltf.scene;
+const loadCharacter = (filename: string) => {
+  const path = `/models/GLB format/${filename}`;
 
-  // Calculate bounding box to determine size
-  const box = new THREE.Box3().setFromObject(model);
-  const size = box.getSize(new THREE.Vector3());
-  console.log('Original Size:', size);
+  // Determine settings based on model type
+  let targetHeight = 1.2;
+  let manualOffset = 0.2;
 
-  // Target height: 1.2m
-  const targetHeight = CHARACTER_CONFIG.targetHeight;
-  const scaleFactor = targetHeight / size.y;
-
-  model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-  // Recalculate size and radius
-  const scaledSize = size.clone().multiplyScalar(scaleFactor);
-  const radius = Math.max(scaledSize.x, scaledSize.z) / 2;
-  console.log('Scaled Size:', scaledSize, 'Radius:', radius);
-
-  // Create a container group to handle offset
-  const characterGroup = new THREE.Group();
-  characterGroup.position.copy(characterMesh.position);
-
-  // Offset model to align feet with ground
-  // Physics position is at center (y=radius), so we lower model by radius
-  // Plus any manual offset
-  model.position.y = -radius + CHARACTER_CONFIG.manualOffset;
-
-  characterGroup.add(model);
-
-  // Enable shadows
-  model.traverse((child) => {
-    if (child instanceof THREE.Mesh) {
-      child.castShadow = true;
-      child.receiveShadow = true;
-    }
-  });
-
-  // Remove old character
-  scene.remove(characterMesh);
-  physicsSystem.removeObject(characterMesh);
-
-  // Add new character group
-  scene.add(characterGroup);
-  physicsSystem.addObject(characterGroup, 100, radius, false, true);
-
-  // Update Controller
-  characterController.dispose();
-  characterController = new CharacterController(characterGroup, scene.getCamera(), 5, 5);
-
-  // Setup Animations
-  // Note: Mixer should be on the model (which has the mesh/bones), not the group
-  // But CharacterController expects 'character' to be the root.
-  // We need to pass the model to setupAnimations? 
-  // Actually AnimationMixer on group works if tracks point to named nodes.
-  // But let's check CharacterController.setupAnimations.
-  // It does `new THREE.AnimationMixer(this.character)`.
-  // If we pass the group, it should work.
-
-  if (gltf.animations.length > 0) {
-    characterController.setupAnimations(gltf.animations);
-    characterController.playAnimation('idle');
+  // Show loading indicator if it's not the initial load (which has its own screen)
+  if (currentCharacterGroup) {
+    loadingElement.style.display = 'flex';
+    loadingElement.style.opacity = '1';
   }
 
-  // Update dependencies
-  cameraFollower.setTarget(characterGroup);
-  interactionManager.setCharacter(characterGroup);
+  modelLoader.load(path, (gltf) => {
+    console.log(`Character loaded: ${filename}`);
+    const model = gltf.scene;
+
+    // Calculate bounding box to determine size
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+
+    const scaleFactor = targetHeight / size.y;
+
+    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+    // Recalculate size and radius
+    const scaledSize = size.clone().multiplyScalar(scaleFactor);
+    const radius = Math.max(scaledSize.x, scaledSize.z) / 2;
+
+    // Create a container group to handle offset
+    const characterGroup = new THREE.Group();
+
+    // Position at previous character position or default
+    if (currentCharacterGroup) {
+      characterGroup.position.copy(currentCharacterGroup.position);
+    } else {
+      characterGroup.position.copy(characterMesh.position);
+    }
+
+    // Offset model to align feet with ground
+    model.position.y = -radius + manualOffset;
+
+    characterGroup.add(model);
+
+    // Enable shadows
+    model.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+
+    // Remove old character
+    if (currentCharacterGroup) {
+      scene.remove(currentCharacterGroup);
+      physicsSystem.removeObject(currentCharacterGroup);
+    } else {
+      scene.remove(characterMesh);
+      physicsSystem.removeObject(characterMesh);
+    }
+
+    currentCharacterGroup = characterGroup;
+
+    // Add new character group
+    scene.add(characterGroup);
+    physicsSystem.addObject(characterGroup, 100, radius, false, true);
+
+    // Update Controller
+    if (characterController) characterController.dispose();
+    characterController = new CharacterController(characterGroup, scene.getCamera(), 5, 5);
+
+    // Setup Animations
+    if (gltf.animations.length > 0) {
+      characterController.setupAnimations(gltf.animations);
+      characterController.playAnimation('idle');
+    }
+
+    // Update dependencies
+    cameraFollower.setTarget(characterGroup);
+    interactionManager.setCharacter(characterGroup);
+
+    // Hide loading
+    loadingElement.style.opacity = '0';
+    setTimeout(() => {
+      loadingElement.style.display = 'none';
+    }, 500);
+  });
+};
+
+// Initial Load
+loadCharacter('character-male-a.glb');
+
+// Handle Avatar Selection
+const avatarBtn = document.querySelector<HTMLButtonElement>('#avatar-icon-btn');
+const avatarDropdown = document.querySelector<HTMLDivElement>('#avatar-dropdown');
+
+if (avatarBtn && avatarDropdown) {
+  // Toggle menu on button click
+  avatarBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    avatarDropdown.classList.toggle('active');
+  });
+
+  // Close menu when clicking outside
+  window.addEventListener('click', () => {
+    avatarDropdown.classList.remove('active');
+  });
+}
+
+document.querySelectorAll('.avatar-option').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const filename = (e.target as HTMLElement).dataset.model;
+    if (filename) {
+      loadCharacter(filename);
+      // Close menu after selection
+      if (avatarDropdown) avatarDropdown.classList.remove('active');
+    }
+  });
 });
 
 console.log('🎮 Three.js scene initialized!');
 console.log('📦 Use WASD or Arrow keys to move the character');
 console.log('🖱️ Drag with mouse to rotate camera, scroll to zoom');
-
