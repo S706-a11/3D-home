@@ -15,7 +15,7 @@ export class Scene {
 
   constructor(container: HTMLElement) {
     this.clock = new THREE.Clock();
-    
+
     // Initialize scene
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x1a1a2e);
@@ -31,9 +31,9 @@ export class Scene {
     this.camera.position.set(0, 2, 5);
 
     // Setup renderer
-    this.renderer = new THREE.WebGLRenderer({ 
+    this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true 
+      alpha: true
     });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -42,7 +42,7 @@ export class Scene {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1;
-    
+
     container.appendChild(this.renderer.domElement);
 
     // Setup controls
@@ -52,6 +52,7 @@ export class Scene {
     this.controls.maxPolarAngle = Math.PI / 2;
     this.controls.minDistance = 2;
     this.controls.maxDistance = 20;
+    this.controls.enablePan = false; // Disable right-click panning
 
     // Setup lighting
     this.setupLights();
