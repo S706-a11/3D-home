@@ -25,6 +25,22 @@ export class WorldManager {
     }
 
     public setupGround(): void {
+        // Base Snow Layer (to fill gaps)
+
+        const baseGeometry = new THREE.PlaneGeometry(20, 20);
+        const baseMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            roughness: 1.0,
+            metalness: 0.0,
+            map: new THREE.TextureLoader().load('/textures/snow_floor_ao_1k.jpg'),
+        });
+        const baseGround = new THREE.Mesh(baseGeometry, baseMaterial);
+        baseGround.rotation.x = -Math.PI / 2;
+        baseGround.position.y = -0.05; // Slightly below tiles
+        baseGround.receiveShadow = true;
+        this.scene.add(baseGround);
+
+
         // Load Snow Ground
         this.modelLoader.load('/models/holiday/snow-flat-large.glb', (gltf: GLTF) => {
             const snowTile = gltf.scene;
@@ -40,7 +56,6 @@ export class WorldManager {
 
             // Safety check to prevent infinite loops
             if (size.x < 0.1 || size.z < 0.1) {
-                console.warn('Snow tile size is too small, using default size');
                 size.set(1, 1, 1);
             }
 
