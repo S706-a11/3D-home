@@ -241,13 +241,13 @@ const projects = [
 projects.forEach((proj, index) => {
   const stand = new DisplayStand(proj);
   const angle = (index / projects.length) * Math.PI * 2;
-  const radius = 8;
+  const radius = 10; // At the border
   stand.setPosition(
     Math.cos(angle) * radius,
-    0,
+    2, // In the sky
     Math.sin(angle) * radius
   );
-  stand.setRotation(-angle + Math.PI / 2); // Face center
+  stand.setRotation(-angle - Math.PI / 2); // Face center
 
   scene.add(stand.getMesh());
   interactionManager.addStand(stand);

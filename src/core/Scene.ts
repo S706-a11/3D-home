@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { InteractionManager } from './InteractionManager';
 import { HolidayManager } from './HolidayManager';
 
 /**
@@ -88,10 +87,6 @@ export class Scene {
 
     // Start animation loop
     this.animate();
-  }
-
-  private setupLights(): void {
-    // Moved to constructor to match previous state, but keeping it clean
   }
 
   private handleResize(): void {

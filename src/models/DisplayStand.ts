@@ -20,49 +20,37 @@ export class DisplayStand {
     }
 
     private createGeometry(): void {
-        // 1. Base Pedestal
-        const baseGeo = new THREE.BoxGeometry(0.8, 1.2, 0.8);
-        const baseMat = new THREE.MeshStandardMaterial({
-            color: 0x2c3e50,
-            roughness: 0.2,
-            metalness: 0.8
+        // 1. Glass Backing (Floating Billboard)
+        const glassGeo = new THREE.BoxGeometry(4.2, 2.7, 0.1);
+        const glassMat = new THREE.MeshPhysicalMaterial({
+            color: 0x88ccff,
+            metalness: 0.1,
+            roughness: 0.1,
+            transmission: 0.6, // Glass-like
+            thickness: 0.5,
+            transparent: true,
+            opacity: 0.8
         });
-        const base = new THREE.Mesh(baseGeo, baseMat);
-        base.position.y = 0.6;
-        base.castShadow = true;
-        base.receiveShadow = true;
-        this.mesh.add(base);
+        const glassPanel = new THREE.Mesh(glassGeo, glassMat);
+        glassPanel.castShadow = true;
+        this.mesh.add(glassPanel);
 
-        // 2. Angled Display Surface
-        const displayGeo = new THREE.BoxGeometry(1.0, 0.1, 0.8);
-        const displayMat = new THREE.MeshStandardMaterial({
-            color: 0x34495e,
-            roughness: 0.2,
-            metalness: 0.5
-        });
-        const display = new THREE.Mesh(displayGeo, displayMat);
-        display.position.set(0, 1.25, 0);
-        display.rotation.x = Math.PI / 6;
-        display.castShadow = true;
-        this.mesh.add(display);
-
-        // 3. Screen with Text Texture
-        const screenGeo = new THREE.PlaneGeometry(0.9, 0.7);
+        // 2. Screen with Text Texture
+        const screenGeo = new THREE.PlaneGeometry(4, 2.5);
         const texture = this.createTextTexture(this.data.title);
 
         const screenMat = new THREE.MeshStandardMaterial({
             map: texture,
-            roughness: 0.8,
+            roughness: 0.4,
             metalness: 0.1,
-            side: THREE.DoubleSide,
+            side: THREE.FrontSide,
             emissive: 0x000000,
             emissiveIntensity: 0
         });
         this.interactableMesh = new THREE.Mesh(screenGeo, screenMat);
-        this.interactableMesh.position.set(0, 0.06, 0);
-        this.interactableMesh.rotation.x = -Math.PI / 2;
+        this.interactableMesh.position.set(0, 0, 0.06); // Slightly in front of glass
 
-        display.add(this.interactableMesh);
+        this.mesh.add(this.interactableMesh);
     }
 
     private createTextTexture(text: string): THREE.CanvasTexture {
