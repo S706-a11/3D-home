@@ -55,28 +55,27 @@ export class Scene {
     this.controls.maxDistance = 20;
     this.controls.enablePan = false; // Disable right-click panning
 
-    // Directional light (sun-like)
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    // Directional light (warm winter sun)
+    const directionalLight = new THREE.DirectionalLight(0xfff4e6, 1.2);
     directionalLight.position.set(5, 10, 5);
     directionalLight.castShadow = true;
     directionalLight.shadow.camera.near = 0.1;
     directionalLight.shadow.camera.far = 50;
-    directionalLight.shadow.camera.left = -10;
-    directionalLight.shadow.camera.right = 10;
-    directionalLight.shadow.camera.top = 10;
-    directionalLight.shadow.camera.bottom = -10;
+    directionalLight.shadow.camera.left = -15;
+    directionalLight.shadow.camera.right = 15;
+    directionalLight.shadow.camera.top = 15;
+    directionalLight.shadow.camera.bottom = -15;
     directionalLight.shadow.mapSize.width = 2048;
     directionalLight.shadow.mapSize.height = 2048;
     this.scene.add(directionalLight);
 
-    // Hemisphere light for natural sky/ground lighting
-    const hemisphereLight = new THREE.HemisphereLight(0x87ceeb, 0x8b7355, 0.6);
+    // Hemisphere light for winter twilight feel
+    const hemisphereLight = new THREE.HemisphereLight(0xb8d4ff, 0xffecd1, 0.7);
     this.scene.add(hemisphereLight);
 
-    // Point light for additional accent
-    const pointLight = new THREE.PointLight(0xffffff, 0.8, 100);
-    pointLight.position.set(0, 5, 0);
-    this.scene.add(pointLight);
+    // Ambient warm glow for cozy Christmas atmosphere
+    const ambientLight = new THREE.AmbientLight(0xffeedd, 0.3);
+    this.scene.add(ambientLight);
 
     // Initialize Holiday Manager
     const holidayManager = new HolidayManager(this.scene);

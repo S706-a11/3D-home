@@ -59,8 +59,8 @@ export class WorldManager {
                 size.set(1, 1, 1);
             }
 
-            // Create grid to cover 20x20 area
-            const gridSize = 24; // Slightly larger to be safe
+            // Create grid to cover 24x24 area with random placement
+            const gridSize = 24;
             const tilesX = Math.ceil(gridSize / size.x);
             const tilesZ = Math.ceil(gridSize / size.z);
 
@@ -70,11 +70,20 @@ export class WorldManager {
             for (let x = 0; x < tilesX; x++) {
                 for (let z = 0; z < tilesZ; z++) {
                     const tile = snowTile.clone();
+
+                    // Add random offset for natural look (up to 50% of tile size)
+                    const randomOffsetX = (Math.random() - 0.5) * size.x * 0.5;
+                    const randomOffsetZ = (Math.random() - 0.5) * size.z * 0.5;
+
                     tile.position.set(
-                        startX + x * size.x + size.x / 2,
+                        startX + x * size.x + size.x / 2 + randomOffsetX,
                         0,
-                        startZ + z * size.z + size.z / 2
+                        startZ + z * size.z + size.z / 2 + randomOffsetZ
                     );
+
+                    // Random rotation for variety
+                    tile.rotation.y = Math.random() * Math.PI * 2;
+
                     this.scene.add(tile);
                 }
             }

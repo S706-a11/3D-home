@@ -13,34 +13,93 @@ export class HolidayManager {
 
     public loadAssets(): void {
         const assets = [
-            // Trees
-            { file: 'tree-decorated-snow.glb', position: new THREE.Vector3(-6, 0, -6), scale: 2.0, rotation: new THREE.Euler(0, Math.PI / 4, 0) },
-            { file: 'tree-snow-a.glb', position: new THREE.Vector3(6, 0, -6), scale: 1.8, rotation: new THREE.Euler(0, -Math.PI / 6, 0) },
-            { file: 'tree-snow-b.glb', position: new THREE.Vector3(-7, 0, 5), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
+            // Main Christmas Trees
+            { file: 'tree-decorated-snow.glb', position: new THREE.Vector3(-8, 0, -8), scale: 2.5, rotation: new THREE.Euler(0, Math.PI / 4, 0) },
+            { file: 'tree-snow-a.glb', position: new THREE.Vector3(8, 0, -8), scale: 2.0, rotation: new THREE.Euler(0, -Math.PI / 6, 0) },
+            { file: 'tree-snow-b.glb', position: new THREE.Vector3(-9, 0, 6), scale: 1.8, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'tree-snow-c.glb', position: new THREE.Vector3(7, 0, 7), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'tree-decorated.glb', position: new THREE.Vector3(0, 0, -10), scale: 2.2, rotation: new THREE.Euler(0, 0, 0) },
 
             // Snowman Family
-            { file: 'snowman-hat.glb', position: new THREE.Vector3(4, 0, 4), scale: 1.2, rotation: new THREE.Euler(0, -Math.PI / 4, 0) },
-            { file: 'snowman.glb', position: new THREE.Vector3(5.5, 0, 3.5), scale: 0.8, rotation: new THREE.Euler(0, -Math.PI / 3, 0) },
+            { file: 'snowman-hat.glb', position: new THREE.Vector3(5, 0, 5), scale: 1.3, rotation: new THREE.Euler(0, -Math.PI / 4, 0) },
+            { file: 'snowman.glb', position: new THREE.Vector3(6.5, 0, 4.5), scale: 1.0, rotation: new THREE.Euler(0, -Math.PI / 3, 0) },
 
-            // Presents around the main tree
-            { file: 'present-a-round.glb', position: new THREE.Vector3(-5, 0, -5), scale: 0.8, rotation: new THREE.Euler(0, Math.random(), 0) },
-            { file: 'present-b-cube.glb', position: new THREE.Vector3(-5.5, 0, -4.5), scale: 0.7, rotation: new THREE.Euler(0, Math.random(), 0) },
-            { file: 'present-a-rectangle.glb', position: new THREE.Vector3(-4.5, 0, -5.5), scale: 0.9, rotation: new THREE.Euler(0, Math.random(), 0) },
+            // Christmas Train Set
+            { file: 'train-locomotive.glb', position: new THREE.Vector3(-6, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+            { file: 'train-tender.glb', position: new THREE.Vector3(-4.5, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+            { file: 'train-wagon-logs.glb', position: new THREE.Vector3(-3, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+            { file: 'train-wagon.glb', position: new THREE.Vector3(-1.5, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
 
-            // Candy Canes lining the path
-            { file: 'candy-cane-red.glb', position: new THREE.Vector3(-2, 0, -2), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
-            { file: 'candy-cane-green.glb', position: new THREE.Vector3(2, 0, -2), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
-            { file: 'candy-cane-red.glb', position: new THREE.Vector3(-2, 0, 2), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
-            { file: 'candy-cane-green.glb', position: new THREE.Vector3(2, 0, 2), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
+            // Train Rails
+            { file: 'trainset-rail-straight.glb', position: new THREE.Vector3(-6, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+            { file: 'trainset-rail-straight.glb', position: new THREE.Vector3(-4.5, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+            { file: 'trainset-rail-straight.glb', position: new THREE.Vector3(-3, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+
+            // Reindeer
+            { file: 'reindeer.glb', position: new THREE.Vector3(-7, 0, -6), scale: 1.2, rotation: new THREE.Euler(0, Math.PI / 6, 0) },
+            { file: 'reindeer.glb', position: new THREE.Vector3(7, 0, -7), scale: 1.1, rotation: new THREE.Euler(0, -Math.PI / 4, 0) },
+
+            // Nutcrackers (Guards)
+            { file: 'nutcracker.glb', position: new THREE.Vector3(-3, 0, -9), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'nutcracker.glb', position: new THREE.Vector3(3, 0, -9), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+
+            // Gingerbread People
+            { file: 'gingerbread-man.glb', position: new THREE.Vector3(-4, 0, 6), scale: 1.2, rotation: new THREE.Euler(0, Math.PI / 4, 0) },
+            { file: 'gingerbread-woman.glb', position: new THREE.Vector3(-3, 0, 6.5), scale: 1.2, rotation: new THREE.Euler(0, -Math.PI / 6, 0) },
+
+            // Presents around main tree
+            { file: 'present-a-round.glb', position: new THREE.Vector3(-7.5, 0, -7.5), scale: 1.0, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-b-cube.glb', position: new THREE.Vector3(-8.5, 0, -7), scale: 0.8, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-a-rectangle.glb', position: new THREE.Vector3(-7, 0, -8.5), scale: 0.9, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-b-round.glb', position: new THREE.Vector3(-6.5, 0, -7), scale: 0.7, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-a-cube.glb', position: new THREE.Vector3(-7.5, 0, -6.5), scale: 0.8, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-b-rectangle.glb', position: new THREE.Vector3(-8, 0, -6), scale: 0.9, rotation: new THREE.Euler(0, Math.random(), 0) },
+
+            // More scattered presents
+            { file: 'present-a-round.glb', position: new THREE.Vector3(7.5, 0, -7), scale: 0.8, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-b-cube.glb', position: new THREE.Vector3(8, 0, -6.5), scale: 0.7, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-a-cube.glb', position: new THREE.Vector3(-8, 0, 5), scale: 0.9, rotation: new THREE.Euler(0, Math.random(), 0) },
+
+            // Candy Canes pathway
+            { file: 'candy-cane-red.glb', position: new THREE.Vector3(-3, 0, -3), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'candy-cane-green.glb', position: new THREE.Vector3(3, 0, -3), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'candy-cane-red.glb', position: new THREE.Vector3(-3, 0, 3), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'candy-cane-green.glb', position: new THREE.Vector3(3, 0, 3), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'candy-cane-red.glb', position: new THREE.Vector3(-4, 0, 0), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'candy-cane-green.glb', position: new THREE.Vector3(4, 0, 0), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
+
+            // Colored String Lights
+            { file: 'lights-colored.glb', position: new THREE.Vector3(-5, 2, -5), scale: 2.0, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'lights-red.glb', position: new THREE.Vector3(5, 2, -5), scale: 2.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+            { file: 'lights-green.glb', position: new THREE.Vector3(0, 2, 5), scale: 2.0, rotation: new THREE.Euler(0, Math.PI, 0) },
+
+            // Lanterns for Atmosphere
+            { file: 'lantern.glb', position: new THREE.Vector3(-6, 0, 0), scale: 1.2, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'lantern.glb', position: new THREE.Vector3(6, 0, 0), scale: 1.2, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'lantern.glb', position: new THREE.Vector3(0, 0, -6), scale: 1.2, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'lantern.glb', position: new THREE.Vector3(0, 0, 6), scale: 1.2, rotation: new THREE.Euler(0, 0, 0) },
+
+            // Christmas Socks
+            { file: 'sock-red.glb', position: new THREE.Vector3(-1, 1.5, -9.5), scale: 1.0, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'sock-green.glb', position: new THREE.Vector3(1, 1.5, -9.5), scale: 1.0, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'sock-red-cane.glb', position: new THREE.Vector3(0, 1.5, -9.5), scale: 1.0, rotation: new THREE.Euler(0, 0, 0) },
 
             // Wreath
-            { file: 'wreath-decorated.glb', position: new THREE.Vector3(0, 3, -8), scale: 2.0, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'wreath-decorated.glb', position: new THREE.Vector3(0, 3.5, -10.5), scale: 2.5, rotation: new THREE.Euler(0, 0, 0) },
 
-            // Bench
-            { file: 'bench.glb', position: new THREE.Vector3(0, 0, 6), scale: 1.5, rotation: new THREE.Euler(0, Math.PI, 0) },
+            // Bench and Sled
+            { file: 'bench.glb', position: new THREE.Vector3(-2, 0, 7), scale: 1.5, rotation: new THREE.Euler(0, Math.PI / 4, 0) },
+            { file: 'sled.glb', position: new THREE.Vector3(3.5, 0, 7), scale: 1.3, rotation: new THREE.Euler(0, -Math.PI / 6, 0) },
+            { file: 'sled-long.glb', position: new THREE.Vector3(-5, 0, 3), scale: 1.2, rotation: new THREE.Euler(0, Math.PI / 3, 0) },
 
-            // Sled
-            { file: 'sled.glb', position: new THREE.Vector3(3, 0, 6), scale: 1.2, rotation: new THREE.Euler(0, -Math.PI / 6, 0) }
+            // Snowflakes scattered around
+            { file: 'snowflake-a.glb', position: new THREE.Vector3(-5, 0.5, -2), scale: 0.5, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'snowflake-b.glb', position: new THREE.Vector3(4, 0.5, -4), scale: 0.6, rotation: new THREE.Euler(0, Math.PI / 4, 0) },
+            { file: 'snowflake-c.glb', position: new THREE.Vector3(-3, 0.5, 4), scale: 0.4, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+
+            // Snow piles for terrain variation
+            { file: 'snow-pile.glb', position: new THREE.Vector3(5, 0, 2), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(-6, 0, -3), scale: 1.3, rotation: new THREE.Euler(0, Math.random(), 0) }
         ];
 
         assets.forEach(asset => {
@@ -62,9 +121,17 @@ export class HolidayManager {
                     });
 
                     this.scene.add(model);
+
+                    // Add point lights to lanterns for glow effect
+                    if (asset.file === 'lantern.glb') {
+                        const light = new THREE.PointLight(0xffaa66, 0.8, 5);
+                        light.position.copy(asset.position);
+                        light.position.y += 0.5;
+                        this.scene.add(light);
+                    }
                 },
                 undefined,
-                (error) => {
+                () => {
                     console.warn(`Could not load holiday asset: ${asset.file}`);
                 }
             );
