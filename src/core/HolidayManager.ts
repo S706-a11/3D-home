@@ -81,6 +81,9 @@ export class HolidayManager {
             { file: 'present-b-cube.glb', position: new THREE.Vector3(8, 0, -6.5), scale: 0.7, rotation: new THREE.Euler(0, Math.random(), 0) },
             { file: 'present-a-cube.glb', position: new THREE.Vector3(-8, 0, 5), scale: 0.9, rotation: new THREE.Euler(0, Math.random(), 0) },
 
+            { file: 'present-b-cube.glb', position: new THREE.Vector3(8, 0, -6.5), scale: 0.7, rotation: new THREE.Euler(0, Math.random(), 0) },
+            { file: 'present-a-cube.glb', position: new THREE.Vector3(-8, 0, 5), scale: 0.9, rotation: new THREE.Euler(0, Math.random(), 0) },
+
             // Candy Canes pathway
             { file: 'candy-cane-red.glb', position: new THREE.Vector3(-3, 0, -3), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
             { file: 'candy-cane-green.glb', position: new THREE.Vector3(3, 0, -3), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
@@ -89,10 +92,13 @@ export class HolidayManager {
             { file: 'candy-cane-red.glb', position: new THREE.Vector3(-4, 0, 0), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
             { file: 'candy-cane-green.glb', position: new THREE.Vector3(4, 0, 0), scale: 1.5, rotation: new THREE.Euler(0, 0, 0) },
 
-            // Colored String Lights
-            { file: 'lights-colored.glb', position: new THREE.Vector3(-5, 2, -5), scale: 2.0, rotation: new THREE.Euler(0, 0, 0) },
-            { file: 'lights-red.glb', position: new THREE.Vector3(5, 2, -5), scale: 2.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
-            { file: 'lights-green.glb', position: new THREE.Vector3(0, 2, 5), scale: 2.0, rotation: new THREE.Euler(0, Math.PI, 0) },
+            // Colored String Lights - Between Billboards forming a canopy
+            { file: 'lights-colored.glb', position: new THREE.Vector3(9, 3.5, 5), scale: 5.0, rotation: new THREE.Euler(0, Math.PI / 3, 0) },
+            { file: 'lights-red.glb', position: new THREE.Vector3(0, 3.5, 10), scale: 5.0, rotation: new THREE.Euler(0, 0, 0) },
+            { file: 'lights-green.glb', position: new THREE.Vector3(-8.66, 3.5, 5), scale: 5.0, rotation: new THREE.Euler(0, Math.PI/1.5, 0) },
+            { file: 'lights-colored.glb', position: new THREE.Vector3(-8.66, 3.5, -5), scale: 5.0, rotation: new THREE.Euler(0, 7 * Math.PI / 5.3, 0) },
+            { file: 'lights-red.glb', position: new THREE.Vector3(0, 3.5, -10), scale: 5.0, rotation: new THREE.Euler(0, 3 * Math.PI, 0) },
+            { file: 'lights-green.glb', position: new THREE.Vector3(8.66, 3.5, -5), scale: 5.0, rotation: new THREE.Euler(0, 11 * Math.PI / 6.6, 0) },
 
             // Lanterns for Atmosphere
             { file: 'lantern.glb', position: new THREE.Vector3(-6, 0, 0), scale: 1.2, rotation: new THREE.Euler(0, 0, 0) },
