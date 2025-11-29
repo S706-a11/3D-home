@@ -27,7 +27,7 @@ export class WorldManager {
     public setupGround(): void {
         // Base Snow Layer (to fill gaps)
 
-        const baseGeometry = new THREE.PlaneGeometry(20, 20);
+        const baseGeometry = new THREE.PlaneGeometry(23, 23);
         const baseMaterial = new THREE.MeshStandardMaterial({
             color: 0xffffff,
             roughness: 1.0,
@@ -91,12 +91,15 @@ export class WorldManager {
     }
 
     public setupDecorations(): void {
-    
-        // Create 4 Physics Balls
-        const ballColors = [0xff4444, 0x44ff44, 0x4444ff, 0xffff44];
+
+        // Create 10 Physics Balls
+        const ballColors = [
+            0xff4444, 0x44ff44, 0x4444ff, 0xffff44, 0xff44ff,
+            0x44ffff, 0xff8844, 0x88ff44, 0x4488ff, 0xff4488
+        ];
         const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 10; i++) {
             const ballMaterial = new THREE.MeshStandardMaterial({
                 color: ballColors[i],
                 roughness: 0.4,
@@ -104,12 +107,15 @@ export class WorldManager {
             });
             const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
 
-            // Position in a circle
-            const angle = (i / 4) * Math.PI * 2;
-            const radius = 3;
+            // Position in two concentric circles
+            const isInnerCircle = i < 5;
+            const angle = (i % 5 / 5) * Math.PI * 2;
+            const radius = isInnerCircle ? 3 : 5;
+            const dropHeight = isInnerCircle ? 5 : 6; // Different heights for variety
+
             ballMesh.position.set(
                 Math.cos(angle) * radius,
-                5, // Drop from height
+                dropHeight,
                 Math.sin(angle) * radius
             );
 
