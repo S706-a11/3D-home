@@ -135,25 +135,46 @@ export class WorldManager {
     public setupDisplayStands(): void {
         const projects = [
             {
-                id: 'p1',
-                title: 'Project Alpha',
-                description: 'A revolutionary AI assistant that helps you code faster.',
-                imageUrl: 'https://via.placeholder.com/400x200/4a90e2/ffffff?text=Project+Alpha',
-                projectUrl: '#'
+                id: '1',
+                title: "Getthawha",
+                description: "Getthawha Thai Massage, featuring an online booking system, service menu, and location finder, all built with React, TypeScript, and a custom backend API. (frontend role)",
+                imageUrl: '/images/projects/getthawha.jpg',
+                projectUrl: "https://getthawha.com/"
             },
             {
-                id: 'p2',
-                title: 'Neon City',
-                description: 'A cyberpunk-themed 3D experience built with Three.js.',
-                imageUrl: 'https://via.placeholder.com/400x200/e94560/ffffff?text=Neon+City',
-                projectUrl: '#'
+                id: '2',
+                title: "PokéBay",
+                description: "A Pokémon-themed e-commerce application built as an educational project. It uses Laravel for all backend logic, user authentication, and route handling, with MySQL for data persistence to manage users, Pokémon (products), and orders. (Fullstack role)",
+                imageUrl: '/images/projects/pokebay.jpg',
+                projectUrl: "https://e-commerce.iamgot.com"
             },
             {
-                id: 'p3',
-                title: 'Eco Tracker',
-                description: 'Mobile app for tracking your carbon footprint.',
-                imageUrl: 'https://via.placeholder.com/400x200/44ff44/ffffff?text=Eco+Tracker',
-                projectUrl: '#'
+                id: '3',
+                title: "Run, Little Hero!",
+                description: "A cross-platform, real-time multiplayer endless runner inspired by Cookie Run. Players race against each other live, dodging obstacles and collecting items. The game client is built with LibGDX and is supported by a custom backend using Spring Boot and a Node.js (Socket.IO) server to handle the live multiplayer. (frontend role)",
+                imageUrl: '/images/projects/RunLittleHero.jpg',
+                projectUrl: "https://game.yungying.com/"
+            },
+            {
+                id: '4',
+                title: "Calendar",
+                description: "A serverless(firebase) web application for modern event and schedule management. The frontend is built with React, responsive interface that allows users to toggle between Month, Week, and Day views.",
+                imageUrl: '/images/projects/calendar.jpg',
+                projectUrl: "https://calendar.iamgot.com/"
+            },
+            {
+                id: '5',
+                title: "Thira",
+                description: "A serverless social media application built with React and Firebase. The project features a real-time feed, user profiles, and CRUD functionality for posts. It leverages Firebase Authentication for secure login and Cloud Firestore for all application data. **no server for uploads (Fullstack role)",
+                imageUrl: '/images/projects/thira.jpg',
+                projectUrl: "https://thira.iamgot.com/"
+            },
+            {
+                id: '6',
+                title: "Dog or Cat",
+                description: "A web-based AI tool that can accurately classify an uploaded image as either a 'Dog' or a 'Cat.' This project is for learning purposes, utilizing a pre-trained machine learning model to perform image recognition tasks. (react,python)",
+                imageUrl: '/images/projects/dogcat.jpg',
+                projectUrl: "https://dog_or_cat.iamgot.com/"
             }
         ];
 
