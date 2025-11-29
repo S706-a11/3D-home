@@ -50,17 +50,22 @@ export class InteractionManager {
                 // Project to screen
                 standPos.project(this.camera);
 
-                const x = (standPos.x * .5 + .5) * window.innerWidth;
-                const y = (standPos.y * -.5 + .5) * window.innerHeight;
+                const canvas = document.querySelector('canvas');
+                if (canvas) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (standPos.x * .5 + .5) * rect.width;
+                    const y = (standPos.y * -.5 + .5) * rect.height;
 
-                // Only show if in front of camera (z < 1)
-                if (standPos.z < 1) {
-                    hintEl.style.left = '0px';
-                    hintEl.style.top = '0px';
-                    hintEl.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-                    hintEl.classList.add('visible');
-                } else {
-                    hintEl.classList.remove('visible');
+                    // Only show if in front of camera (z < 1)
+                    if (standPos.z < 1) {
+                        hintEl.style.left = '0px';
+                        hintEl.style.top = '0px';
+                        // Add canvas offset to position
+                        hintEl.style.transform = `translate(${x + rect.left}px, ${y + rect.top}px) translate(-50%, -50%)`;
+                        hintEl.classList.add('visible');
+                    } else {
+                        hintEl.classList.remove('visible');
+                    }
                 }
             } else {
                 hintEl.classList.remove('visible');
@@ -69,8 +74,15 @@ export class InteractionManager {
     }
 
     private handleMouseMove(event: MouseEvent): void {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        } else {
+            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
 
         this.checkHover();
     }
@@ -116,8 +128,15 @@ export class InteractionManager {
     }
 
     private handleClick(event: MouseEvent): void {
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        } else {
+            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
 
