@@ -1,13 +1,16 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { PhysicsSystem } from './PhysicsSystem';
 
 export class HolidayManager {
     private scene: THREE.Scene;
+    private physicsSystem: PhysicsSystem | null;
     private loader: GLTFLoader;
     private assetsPath: string = 'models/holiday/';
 
-    constructor(scene: THREE.Scene) {
+    constructor(scene: THREE.Scene, physicsSystem?: PhysicsSystem) {
         this.scene = scene;
+        this.physicsSystem = physicsSystem || null;
         this.loader = new GLTFLoader();
     }
 
@@ -23,6 +26,24 @@ export class HolidayManager {
             // Snowman Family
             { file: 'snowman-hat.glb', position: new THREE.Vector3(5, 0, 5), scale: 1.3, rotation: new THREE.Euler(0, -Math.PI / 4, 0) },
             { file: 'snowman.glb', position: new THREE.Vector3(6.5, 0, 4.5), scale: 1.0, rotation: new THREE.Euler(0, -Math.PI / 3, 0) },
+
+            // Random Snowmen scattered around
+            { file: 'snowman-hat.glb', position: new THREE.Vector3(-8.5, 0, 3), scale: 1.1, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snowman.glb', position: new THREE.Vector3(8, 0, 2), scale: 0.9, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snowman-hat.glb', position: new THREE.Vector3(-4, 0, -5), scale: 1.2, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snowman.glb', position: new THREE.Vector3(5, 0, -3), scale: 0.8, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snowman-hat.glb', position: new THREE.Vector3(2, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snowman.glb', position: new THREE.Vector3(-2.5, 0, 9), scale: 0.95, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+
+            // Random Snow Piles for terrain variation
+            { file: 'snow-pile.glb', position: new THREE.Vector3(6, 0, 1), scale: 1.5, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(-7, 0, -2), scale: 1.3, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(3, 0, -6), scale: 1.4, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(-5, 0, 7), scale: 1.2, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(9, 0, -4), scale: 1.6, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(-9, 0, 8), scale: 1.4, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(4.5, 0, 5), scale: 1.1, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'snow-pile.glb', position: new THREE.Vector3(-3.5, 0, -4), scale: 1.3, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
 
             // Christmas Train Set
             { file: 'train-locomotive.glb', position: new THREE.Vector3(-6, 0, 8), scale: 1.0, rotation: new THREE.Euler(0, Math.PI / 2, 0) },
@@ -99,7 +120,38 @@ export class HolidayManager {
 
             // Snow piles for terrain variation
             { file: 'snow-pile.glb', position: new THREE.Vector3(5, 0, 2), scale: 1.5, rotation: new THREE.Euler(0, Math.random(), 0) },
-            { file: 'snow-pile.glb', position: new THREE.Vector3(-6, 0, -3), scale: 1.3, rotation: new THREE.Euler(0, Math.random(), 0) }
+            { file: 'snow-pile.glb', position: new THREE.Vector3(-6, 0, -3), scale: 1.3, rotation: new THREE.Euler(0, Math.random(), 0) },
+
+            // Rocks around border for natural boundaries
+            // North border
+            { file: 'rocks-large.glb', position: new THREE.Vector3(-10, 0, -11), scale: 1.2, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(-5, 0, -11.5), scale: 1.0, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-small.glb', position: new THREE.Vector3(-2, 0, -11), scale: 0.8, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(2, 0, -11.5), scale: 1.1, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(6, 0, -11), scale: 0.9, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-small.glb', position: new THREE.Vector3(10, 0, -11.5), scale: 0.7, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+
+            // South border
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(-9, 0, 11), scale: 1.0, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(-4, 0, 11.5), scale: 1.3, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-small.glb', position: new THREE.Vector3(0, 0, 11), scale: 0.8, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(5, 0, 11.5), scale: 0.9, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(9, 0, 11), scale: 1.1, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+
+            // West border
+            { file: 'rocks-small.glb', position: new THREE.Vector3(-11, 0, -8), scale: 0.7, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(-11.5, 0, -4), scale: 1.2, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(-11, 0, 0), scale: 1.0, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-small.glb', position: new THREE.Vector3(-11.5, 0, 4), scale: 0.8, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(-11, 0, 8), scale: 1.1, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+
+            // East border
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(11, 0, -9), scale: 0.9, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(11.5, 0, -5), scale: 1.3, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-small.glb', position: new THREE.Vector3(11, 0, -1), scale: 0.7, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-medium.glb', position: new THREE.Vector3(11.5, 0, 3), scale: 1.0, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-large.glb', position: new THREE.Vector3(11, 0, 7), scale: 1.2, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) },
+            { file: 'rocks-small.glb', position: new THREE.Vector3(11.5, 0, 10), scale: 0.8, rotation: new THREE.Euler(0, Math.random() * Math.PI * 2, 0) }
         ];
 
         assets.forEach(asset => {
@@ -121,6 +173,12 @@ export class HolidayManager {
                     });
 
                     this.scene.add(model);
+
+                    // Add collision to rocks (static objects)
+                    if (asset.file.includes('rocks-') && this.physicsSystem) {
+                        const radius = asset.scale * 1.5; // Approximate collision radius
+                        this.physicsSystem.addObject(model, 0, radius, true);
+                    }
 
                     // Add point lights to lanterns for glow effect
                     if (asset.file === 'lantern.glb') {

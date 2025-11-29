@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { HolidayManager } from './HolidayManager';
+import { PhysicsSystem } from './PhysicsSystem';
 
 /**
  * Main scene manager for Three.js application
@@ -13,9 +14,11 @@ export class Scene {
   private controls: OrbitControls;
   private animationCallbacks: Array<(delta: number) => void> = [];
   private clock: THREE.Clock;
+  private physicsSystem: PhysicsSystem | null;
 
-  constructor(container: HTMLElement) {
+  constructor(container: HTMLElement, physicsSystem?: PhysicsSystem) {
     this.clock = new THREE.Clock();
+    this.physicsSystem = physicsSystem || null;
 
     // Initialize scene
     this.scene = new THREE.Scene();
@@ -77,8 +80,8 @@ export class Scene {
     const ambientLight = new THREE.AmbientLight(0xffeedd, 0.3);
     this.scene.add(ambientLight);
 
-    // Initialize Holiday Manager
-    const holidayManager = new HolidayManager(this.scene);
+    // Initialize Holiday Manager with physics
+    const holidayManager = new HolidayManager(this.scene, this.physicsSystem || undefined);
     holidayManager.loadAssets();
 
     // Handle window resize

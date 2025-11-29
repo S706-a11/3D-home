@@ -26,9 +26,9 @@ const modelLoader = new ModelLoader((progress) => {
   console.log('Loading progress:', progress);
 });
 
-// Initialize scene
-const scene = new Scene(container);
+// Initialize scene and physics
 const physicsSystem = new PhysicsSystem();
+const scene = new Scene(container, physicsSystem);
 const audioManager = new AudioManager(scene.getCamera());
 const environmentManager = new EnvironmentManager(scene.getScene());
 

@@ -91,28 +91,7 @@ export class WorldManager {
     }
 
     public setupDecorations(): void {
-        // Add some cubes around the scene
-        const cubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-        const cubeMaterial = new THREE.MeshStandardMaterial({
-            color: 0xe94560,
-            roughness: 0.5,
-            metalness: 0.3
-        });
-
-        for (let i = 0; i < 5; i++) {
-            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-            const angle = (i / 5) * Math.PI * 2;
-            const radius = 5;
-            cube.position.set(
-                Math.cos(angle) * radius,
-                0.25,
-                Math.sin(angle) * radius
-            );
-            cube.castShadow = true;
-            cube.receiveShadow = true;
-            this.scene.add(cube);
-        }
-
+    
         // Create 4 Physics Balls
         const ballColors = [0xff4444, 0x44ff44, 0x4444ff, 0xffff44];
         const ballGeometry = new THREE.SphereGeometry(0.5, 32, 32);
