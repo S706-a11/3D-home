@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { InteractionManager } from './InteractionManager';
+import { HolidayManager } from './HolidayManager';
 
 /**
  * Main scene manager for Three.js application
@@ -54,21 +56,6 @@ export class Scene {
     this.controls.maxDistance = 20;
     this.controls.enablePan = false; // Disable right-click panning
 
-    // Setup lighting
-    this.setupLights();
-
-    // Handle window resize
-    window.addEventListener('resize', this.handleResize.bind(this));
-
-    // Start animation loop
-    this.animate();
-  }
-
-  private setupLights(): void {
-    // Ambient light for overall scene illumination
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    this.scene.add(ambientLight);
-
     // Directional light (sun-like)
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(5, 10, 5);
@@ -91,6 +78,20 @@ export class Scene {
     const pointLight = new THREE.PointLight(0xffffff, 0.8, 100);
     pointLight.position.set(0, 5, 0);
     this.scene.add(pointLight);
+
+    // Initialize Holiday Manager
+    const holidayManager = new HolidayManager(this.scene);
+    holidayManager.loadAssets();
+
+    // Handle window resize
+    window.addEventListener('resize', this.handleResize.bind(this));
+
+    // Start animation loop
+    this.animate();
+  }
+
+  private setupLights(): void {
+    // Moved to constructor to match previous state, but keeping it clean
   }
 
   private handleResize(): void {
