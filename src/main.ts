@@ -6,6 +6,7 @@ import { ModelLoader } from './utils/ModelLoader';
 import { CharacterController } from './models/CharacterController';
 import { CameraFollower } from './utils/CameraFollower';
 import { PhysicsSystem } from './core/PhysicsSystem';
+import { AudioManager } from './core/AudioManager';
 import * as THREE from 'three';
 
 // Initialize the app
@@ -21,12 +22,17 @@ app.innerHTML = `
     <p><strong>Scroll</strong> - Zoom in/out</p>
     <button id="reset-camera">Reset Camera</button>
   </div>
+  
+  <div id="audio-controls">
+    <button id="mute-btn" title="Toggle Sound">🔇</button>
+  </div>
+
   <div id="loading" class="loading">
     <div class="loading-spinner"></div>
     <p>Loading Three.js Scene...</p>
   </div>
   
-
+  <div id="interaction-hint"><span class="hint-text">Click to View</span></div>
 
   <!-- Project Modal -->
   <div id="project-modal">
@@ -56,10 +62,23 @@ document.body.appendChild(credits);
 const container = document.querySelector<HTMLDivElement>('#canvas-container')!;
 const loadingElement = document.querySelector<HTMLDivElement>('#loading')!;
 const resetBtn = document.querySelector<HTMLButtonElement>('#reset-camera')!;
+const muteBtn = document.querySelector<HTMLButtonElement>('#mute-btn')!;
 
 // Initialize scene
 const scene = new Scene(container);
 const physicsSystem = new PhysicsSystem();
+const audioManager = new AudioManager(scene.getCamera());
+
+// Load background audio
+audioManager.load('/sounds/background.mp3');
+
+// Handle Mute Toggle
+if (muteBtn) {
+  muteBtn.addEventListener('click', () => {
+    const isMuted = audioManager.toggleMute();
+    muteBtn.textContent = isMuted ? '🔇' : '🔊';
+  });
+}
 
 // Create a simple ground plane
 const groundGeometry = new THREE.PlaneGeometry(20, 20);
