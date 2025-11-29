@@ -12,26 +12,78 @@
   font-size: 14px;
   z-index: 10;
   box-shadow: var(--glass-shadow);
+  min-width: 250px;
 }
 
 #controls-info h2 {
-  margin: 0 0 12px 0;
+  margin: 0 0 15px 0;
   font-size: 18px;
   font-weight: 600;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-align: center;
 }
 
-#controls-info p {
-  margin: 8px 0;
-  line-height: 1.6;
+.control-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
 }
 
-#controls-info strong {
-  color: var(--accent-primary);
-  font-weight: 600;
+.key-group {
+  display: flex;
+  gap: 4px;
+}
+
+.key-cap {
+  background: #f0f0f0;
+  color: #333;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 12px;
+  box-shadow: 0 3px 0 #ccc;
+  border: 1px solid #ccc;
+  min-width: 28px;
+  text-align: center;
+  display: inline-block;
+  transform: translateY(0);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.key-cap:active,
+.key-cap.active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #ccc;
+  background: #e0e0e0;
+  border-color: #bbb;
+}
+
+.key-cap.wide {
+  min-width: 50px;
+}
+
+.control-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.icon-control {
+  width: 24px;
+  height: 24px;
+  fill: white;
+  opacity: 0.8;
+  transition: all 0.1s;
+}
+
+.icon-control.active {
+  opacity: 1;
+  fill: var(--accent-primary);
+  transform: scale(1.2);
 }
 
 #reset-camera {

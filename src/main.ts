@@ -17,10 +17,36 @@ app.innerHTML = `
   <div id="canvas-container"></div>
   <div id="controls-info">
     <h2>Controls</h2>
-    <p><strong>WASD</strong> or <strong>Arrow Keys</strong> - Move character</p>
-    <p><strong>Shift</strong> - Sprint</p>
-    <p><strong>Mouse</strong> - Rotate camera (drag)</p>
-    <p><strong>Scroll</strong> - Zoom in/out</p>
+    
+    <div class="control-row">
+      <div class="key-group">
+        <div class="key-cap" data-key="w">W</div>
+        <div class="key-cap" data-key="a">A</div>
+        <div class="key-cap" data-key="s">S</div>
+        <div class="key-cap" data-key="d">D</div>
+      </div>
+      <span class="control-desc">Move</span>
+    </div>
+
+    <div class="control-row">
+      <div class="key-cap wide" data-key="shift">Shift</div>
+      <span class="control-desc">Sprint</span>
+    </div>
+
+    <div class="control-row">
+      <svg class="icon-control" data-action="rotate" viewBox="0 0 24 24">
+        <path d="M13,1.07V9H7C6.45,9 6,9.45 6,10V21H13V1.07M15,1.07V21H18C19.1,21 20,20.1 20,19V5C20,3.9 19.1,3 18,3H15M13,23H8C6.9,23 6,22.1 6,21V10C6,9.45 6.45,9 7,9H13V23Z" />
+      </svg>
+      <span class="control-desc">Rotate Camera</span>
+    </div>
+
+    <div class="control-row">
+      <svg class="icon-control" data-action="zoom" viewBox="0 0 24 24">
+        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4C13.11,4 14,4.89 14,6V10H10V6C10,4.89 10.89,4 12,4M12,20C9.79,20 8,18.21 8,16V12H16V16C16,18.21 14.21,20 12,20Z" />
+      </svg>
+      <span class="control-desc">Zoom</span>
+    </div>
+
     <button id="reset-camera">Reset Camera</button>
   </div>
   
@@ -346,7 +372,7 @@ const loadCharacter = (filename: string) => {
 
   // 'wheelchair-power' matches both 'wheelchair-power.glb' and 'wheelchair-power-deluxe.glb'
   if (filename.includes('wheelchair-power')) {
-    manualOffset = 0.02;  
+    manualOffset = 0.02;
   }
 
   // Show loading indicator if it's not the initial load (which has its own screen)
@@ -465,3 +491,34 @@ document.querySelectorAll('.avatar-option').forEach(btn => {
 console.log('🎮 Three.js scene initialized!');
 console.log('📦 Use WASD or Arrow keys to move the character');
 console.log('🖱️ Drag with mouse to rotate camera, scroll to zoom');
+
+// Input Highlighting
+window.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+  const el = document.querySelector(`.key-cap[data-key="${key}"]`);
+  if (el) el.classList.add('active');
+});
+
+window.addEventListener('keyup', (e) => {
+  const key = e.key.toLowerCase();
+  const el = document.querySelector(`.key-cap[data-key="${key}"]`);
+  if (el) el.classList.remove('active');
+});
+
+window.addEventListener('mousedown', () => {
+  const el = document.querySelector('.icon-control[data-action="rotate"]');
+  if (el) el.classList.add('active');
+});
+
+window.addEventListener('mouseup', () => {
+  const el = document.querySelector('.icon-control[data-action="rotate"]');
+  if (el) el.classList.remove('active');
+});
+
+window.addEventListener('wheel', () => {
+  const el = document.querySelector('.icon-control[data-action="zoom"]');
+  if (el) {
+    el.classList.add('active');
+    setTimeout(() => el.classList.remove('active'), 200);
+  }
+});
