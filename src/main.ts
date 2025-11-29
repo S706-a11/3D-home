@@ -25,6 +25,7 @@ app.innerHTML = `
   
   <div id="audio-controls">
     <button id="mute-btn" title="Toggle Sound">🔇</button>
+    <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5" title="Volume">
   </div>
 
   <div id="loading" class="loading">
@@ -63,6 +64,7 @@ const container = document.querySelector<HTMLDivElement>('#canvas-container')!;
 const loadingElement = document.querySelector<HTMLDivElement>('#loading')!;
 const resetBtn = document.querySelector<HTMLButtonElement>('#reset-camera')!;
 const muteBtn = document.querySelector<HTMLButtonElement>('#mute-btn')!;
+const volumeSlider = document.querySelector<HTMLInputElement>('#volume-slider')!;
 
 // Initialize scene
 const scene = new Scene(container);
@@ -70,13 +72,21 @@ const physicsSystem = new PhysicsSystem();
 const audioManager = new AudioManager(scene.getCamera());
 
 // Load background audio
-audioManager.load('/sounds/background.mp3');
+audioManager.load('/sounds/Dandelion_dreams.mp3');
 
 // Handle Mute Toggle
 if (muteBtn) {
   muteBtn.addEventListener('click', () => {
     const isMuted = audioManager.toggleMute();
     muteBtn.textContent = isMuted ? '🔇' : '🔊';
+  });
+}
+
+// Handle Volume Slider
+if (volumeSlider) {
+  volumeSlider.addEventListener('input', (e) => {
+    const volume = parseFloat((e.target as HTMLInputElement).value);
+    audioManager.setVolume(volume);
   });
 }
 
