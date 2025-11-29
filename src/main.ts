@@ -50,6 +50,9 @@ app.innerHTML = `
       
       <div class="avatar-category">Other</div>
       <button class="avatar-option" data-model="wheelchair.glb">Wheelchair</button>
+      <button class="avatar-option" data-model="wheelchair-power-deluxe.glb">Wheelchair Power Deluxe</button>
+      <button class="avatar-option" data-model="wheelchair-power.glb">Wheelchair Power</button>
+      <button class="avatar-option" data-model="wheelchair-deluxe.glb">Wheelchair Deluxe</button>
     </div>
   </div>
 
@@ -338,8 +341,12 @@ const loadCharacter = (filename: string) => {
   let manualOffset = 0.2;
 
   if (filename.includes('character-female-a')) {
-    targetHeight = 1.2;
     manualOffset = 0.35;
+  }
+
+  // 'wheelchair-power' matches both 'wheelchair-power.glb' and 'wheelchair-power-deluxe.glb'
+  if (filename.includes('wheelchair-power')) {
+    manualOffset = 0.02;  
   }
 
   // Show loading indicator if it's not the initial load (which has its own screen)
