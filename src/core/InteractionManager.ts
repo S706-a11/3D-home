@@ -105,7 +105,14 @@ export class InteractionManager {
             this.hoveredStand = newHoveredStand;
         }
 
-        document.body.style.cursor = this.hoveredStand ? 'pointer' : 'default';
+        const canvas = document.querySelector('canvas');
+        if (canvas) {
+            if (this.hoveredStand) {
+                canvas.classList.add('interactive');
+            } else {
+                canvas.classList.remove('interactive');
+            }
+        }
     }
 
     private handleClick(event: MouseEvent): void {

@@ -12,4 +12,10 @@
 #canvas-container canvas {
   display: block;
   outline: none;
+  cursor: url('/cursor.png') 0 0, auto !important;
+}
+
+#canvas-container canvas:active,
+#canvas-container canvas.interactive {
+  cursor: url('/cursor-hand.png') 0 0, pointer !important;
 }

@@ -23,4 +23,12 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Custom Cursor */
+  cursor: url('/cursor.png') 0 0, auto;
+}
+
+/* Interactive Elements */
+a, button, .clickable, select, input, .key-cap, .icon-control, #avatar-icon-btn, .avatar-option {
+  cursor: url('/cursor-hand.png') 0 0, url('/cursor.png') 0 0, pointer;
 }
