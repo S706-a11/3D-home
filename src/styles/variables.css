@@ -1,0 +1,28 @@
+:root {
+  /* Colors */
+  --bg-dark: #1a1a2e;
+  --bg-darker: #16213e;
+  --text-main: rgba(255, 255, 255, 0.87);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --accent-primary: #667eea;
+  --accent-secondary: #764ba2;
+  --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(0, 0, 0, 0.7);
+  --glass-bg-hover: rgba(0, 0, 0, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(10px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* Spacing & Layout */
+  --spacing-sm: 10px;
+  --spacing-md: 20px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 30px;
+  --radius-round: 50%;
+  
+  /* Typography */
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}

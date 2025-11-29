@@ -1,0 +1,26 @@
+/* =========================================
+   Reset & Base Styles
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  font-family: var(--font-family);
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  color: var(--text-main);
+  background-color: var(--bg-dark);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
