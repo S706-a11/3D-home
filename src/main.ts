@@ -8,6 +8,7 @@ import { CameraFollower } from './utils/CameraFollower';
 import { PhysicsSystem } from './core/PhysicsSystem';
 import { AudioManager } from './core/AudioManager';
 import { EnvironmentManager } from './core/EnvironmentManager';
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 
 // Initialize the app
@@ -125,6 +126,7 @@ const scene = new Scene(container);
 const physicsSystem = new PhysicsSystem();
 const audioManager = new AudioManager(scene.getCamera());
 const environmentManager = new EnvironmentManager(scene.getScene());
+const modelLoader = new ModelLoader();
 
 // Load background audio
 audioManager.load('/sounds/Dandelion_dreams.mp3');
@@ -148,21 +150,49 @@ if (volumeSlider) {
   });
 }
 
-// Create a simple ground plane
-const groundGeometry = new THREE.PlaneGeometry(20, 20);
-const groundMaterial = new THREE.MeshStandardMaterial({
-  color: 0x2d4a3e,
-  roughness: 0.8,
-  metalness: 0.2
-});
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
+// Load Snow Ground
+modelLoader.load('/models/holiday/snow-flat-large.glb', (gltf: GLTF) => {
+  const snowTile = gltf.scene;
+  snowTile.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.receiveShadow = true;
+    }
+  });
 
-// Add a grid helper
-const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
-scene.add(gridHelper);
+  // Calculate tile size
+  const box = new THREE.Box3().setFromObject(snowTile);
+  const size = box.getSize(new THREE.Vector3());
+
+  // Safety check to prevent infinite loops
+  if (size.x < 0.1 || size.z < 0.1) {
+    console.warn('Snow tile size is too small, using default size');
+    size.set(1, 1, 1);
+  }
+
+  // Create grid to cover 20x20 area
+  const gridSize = 24; // Slightly larger to be safe
+  const tilesX = Math.ceil(gridSize / size.x);
+  const tilesZ = Math.ceil(gridSize / size.z);
+
+  const startX = -gridSize / 2;
+  const startZ = -gridSize / 2;
+
+  for (let x = 0; x < tilesX; x++) {
+    for (let z = 0; z < tilesZ; z++) {
+      const tile = snowTile.clone();
+      tile.position.set(
+        startX + x * size.x + size.x / 2,
+        0,
+        startZ + z * size.z + size.z / 2
+      );
+      scene.add(tile);
+    }
+  }
+});
+
+// Grid helper removed for better aesthetics with snow ground
+// const gridHelper = new THREE.GridHelper(20, 20, 0x444444, 0x222222);
+// scene.add(gridHelper);
 
 // Create a simple character (cube for demonstration)
 const characterGeometry = new THREE.BoxGeometry(0.5, 1, 0.5);
@@ -352,9 +382,8 @@ setTimeout(() => {
 }, 1000);
 
 // Example of how to load a GLTF model
-const modelLoader = new ModelLoader((progress) => {
-  console.log('Loading progress:', progress);
-});
+// Example of how to load a GLTF model
+// ModelLoader is initialized at the top of the file
 
 // Track current character group to remove it when switching
 let currentCharacterGroup: THREE.Object3D | null = null;
