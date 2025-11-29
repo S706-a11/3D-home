@@ -7,6 +7,7 @@ import { CharacterController } from './models/CharacterController';
 import { CameraFollower } from './utils/CameraFollower';
 import { PhysicsSystem } from './core/PhysicsSystem';
 import { AudioManager } from './core/AudioManager';
+import { EnvironmentManager } from './core/EnvironmentManager';
 import * as THREE from 'three';
 
 // Initialize the app
@@ -70,9 +71,13 @@ const volumeSlider = document.querySelector<HTMLInputElement>('#volume-slider')!
 const scene = new Scene(container);
 const physicsSystem = new PhysicsSystem();
 const audioManager = new AudioManager(scene.getCamera());
+const environmentManager = new EnvironmentManager(scene.getScene());
 
 // Load background audio
 audioManager.load('/sounds/Dandelion_dreams.mp3');
+
+// Load environment
+environmentManager.load('/textures/sky.hdr');
 
 // Handle Mute Toggle
 if (muteBtn) {
