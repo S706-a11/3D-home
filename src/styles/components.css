@@ -130,7 +130,7 @@
 /* --- Avatar Selector --- */
 #avatar-container {
   position: fixed;
-  top: 70px; /* Below audio controls */
+  top: 90px; /* Increased spacing from audio controls */
   right: var(--spacing-md);
   z-index: 100;
 }
@@ -152,7 +152,7 @@
 }
 
 #avatar-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   transform: scale(1.1);
 }
 

@@ -337,6 +337,11 @@ const loadCharacter = (filename: string) => {
   let targetHeight = 1.2;
   let manualOffset = 0.2;
 
+  if (filename.includes('character-female-a')) {
+    targetHeight = 1.2;
+    manualOffset = 0.35;
+  }
+
   // Show loading indicator if it's not the initial load (which has its own screen)
   if (currentCharacterGroup) {
     loadingElement.style.display = 'flex';
