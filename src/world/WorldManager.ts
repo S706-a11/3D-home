@@ -184,7 +184,7 @@ export class WorldManager {
             const radius = 10; // At the border
             stand.setPosition(
                 Math.cos(angle) * radius,
-                2, // In the sky
+                3, // Higher in the sky
                 Math.sin(angle) * radius
             );
             stand.setRotation(-angle - Math.PI / 2); // Face center
