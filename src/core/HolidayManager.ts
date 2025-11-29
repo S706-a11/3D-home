@@ -95,7 +95,7 @@ export class HolidayManager {
             // Colored String Lights - Between Billboards forming a canopy
             { file: 'lights-colored.glb', position: new THREE.Vector3(9, 3.5, 5), scale: 5.0, rotation: new THREE.Euler(0, Math.PI / 3, 0) },
             { file: 'lights-red.glb', position: new THREE.Vector3(0, 3.5, 10), scale: 5.0, rotation: new THREE.Euler(0, 0, 0) },
-            { file: 'lights-green.glb', position: new THREE.Vector3(-8.66, 3.5, 5), scale: 5.0, rotation: new THREE.Euler(0, Math.PI/1.5, 0) },
+            { file: 'lights-green.glb', position: new THREE.Vector3(-8.66, 3.5, 5), scale: 5.0, rotation: new THREE.Euler(0, Math.PI / 1.5, 0) },
             { file: 'lights-colored.glb', position: new THREE.Vector3(-8.66, 3.5, -5), scale: 5.0, rotation: new THREE.Euler(0, 7 * Math.PI / 5.3, 0) },
             { file: 'lights-red.glb', position: new THREE.Vector3(0, 3.5, -10), scale: 5.0, rotation: new THREE.Euler(0, 3 * Math.PI, 0) },
             { file: 'lights-green.glb', position: new THREE.Vector3(8.66, 3.5, -5), scale: 5.0, rotation: new THREE.Euler(0, 11 * Math.PI / 6.6, 0) },
