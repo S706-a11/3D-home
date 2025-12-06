@@ -24,6 +24,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
+  /* Prevent mobile touch scrolling/zooming */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  
   /* Custom Cursor */
   cursor: url('/cursor.png') 0 0, auto;
 }

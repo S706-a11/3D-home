@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import { MobileControls } from '../utils/MobileControls';
 
 /**
  * Character controller for handling player/character movement
- * Supports keyboard input, smooth movement, and animation integration
+ * Supports keyboard input, mobile touch controls, smooth movement, and animation integration
  */
 export class CharacterController {
     private character: THREE.Object3D;
@@ -17,6 +18,7 @@ export class CharacterController {
     private currentAnimation?: THREE.AnimationAction;
     private boundKeyDown: (e: KeyboardEvent) => void;
     private boundKeyUp: (e: KeyboardEvent) => void;
+    private mobileControls?: MobileControls;
 
     private verticalVelocity: number = 0;
     private gravity: number = -30;
@@ -27,7 +29,8 @@ export class CharacterController {
         character: THREE.Object3D,
         camera: THREE.Camera,
         moveSpeed: number = 5,
-        rotationSpeed: number = 3
+        rotationSpeed: number = 3,
+        enableMobileControls: boolean = true
     ) {
         this.character = character;
         this.camera = camera;
@@ -41,6 +44,11 @@ export class CharacterController {
         this.boundKeyUp = this.handleKeyUp.bind(this);
 
         this.setupKeyboardControls();
+
+        // Setup mobile controls if enabled
+        if (enableMobileControls) {
+            this.mobileControls = new MobileControls();
+        }
     }
 
     /**
@@ -127,7 +135,7 @@ export class CharacterController {
         right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
         right.normalize();
 
-        // Forward/Backward movement
+        // Keyboard controls - Forward/Backward movement
         if (this.keys['KeyW'] || this.keys['ArrowUp']) {
             this.velocity.add(forward);
             isMoving = true;
@@ -137,7 +145,7 @@ export class CharacterController {
             isMoving = true;
         }
 
-        // Left/Right movement (strafing)
+        // Keyboard controls - Left/Right movement (strafing)
         if (this.keys['KeyA'] || this.keys['ArrowLeft']) {
             this.velocity.sub(right);
             isMoving = true;
@@ -147,8 +155,16 @@ export class CharacterController {
             isMoving = true;
         }
 
-        // Jump
-        if (this.keys['Space'] && this.isGrounded) {
+        // Mobile controls - Add joystick input
+        if (this.mobileControls && this.mobileControls.isMoving()) {
+            const mobileMovement = this.mobileControls.getMovementDirection(this.camera);
+            this.velocity.add(mobileMovement);
+            isMoving = true;
+            isRunning = isRunning || this.mobileControls.isRunning;
+        }
+
+        // Jump - Keyboard or mobile
+        if ((this.keys['Space'] || (this.mobileControls?.isJumping)) && this.isGrounded) {
             this.verticalVelocity = this.jumpForce;
             this.isGrounded = false;
         }
@@ -270,6 +286,9 @@ export class CharacterController {
         window.removeEventListener('keyup', this.boundKeyUp);
         if (this.mixer) {
             this.mixer.stopAllAction();
+        }
+        if (this.mobileControls) {
+            this.mobileControls.dispose();
         }
     }
 }
