@@ -22,6 +22,40 @@
   }
 }
 
+/* Mobile touch controls - hidden by default on desktop */
+#joystick-base,
+#joystick-stick,
+#jump-button,
+#run-button {
+  display: none !important;
+}
+
+/* Show mobile controls only on touch devices */
+@media (pointer: coarse) {
+  #joystick-base,
+  #joystick-stick {
+    display: block !important;
+  }
+  
+  #jump-button,
+  #run-button {
+    display: flex !important;
+  }
+}
+
+/* Also show on small screens with touch support */
+@media (max-width: 1024px) and (hover: none) {
+  #joystick-base,
+  #joystick-stick {
+    display: block !important;
+  }
+  
+  #jump-button,
+  #run-button {
+    display: flex !important;
+  }
+}
+
 #controls-info h2 {
   margin: 0 0 15px 0;
   font-size: 18px;
