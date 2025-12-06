@@ -211,6 +211,3 @@ const loadCharacter = (filename: string) => {
 // Initial Load
 loadCharacter('character-male-a.glb');
 
-console.log('🎮 Three.js scene initialized!');
-console.log('📦 Use WASD or Arrow keys to move the character');
-console.log('🖱️ Drag with mouse to rotate camera, scroll to zoom');

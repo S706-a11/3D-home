@@ -93,7 +93,7 @@ export class UIManager {
 
   <div id="loading" class="loading">
     <div class="loading-spinner"></div>
-    <p>Loading Three.js Scene...</p>
+    <p>Loading Scene...</p>
   </div>
   
   <div id="interaction-hint"><span class="hint-text">Click to View</span></div>
@@ -122,6 +122,17 @@ export class UIManager {
         credits.innerHTML = 'Made by <a href="https://github.com/S706-a11" target="_blank">@Got</a> • Assets by <a href="https://kenney.nl" target="_blank">Kenney</a> • Skybox by <a href="https://polyhaven.com" target="_blank">Poly Haven</a>';
         document.body.appendChild(credits);
 
+        // Add touch support for credits links
+        credits.querySelectorAll('a').forEach(link => {
+            link.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                const href = link.getAttribute('href');
+                if (href) {
+                    window.open(href, '_blank');
+                }
+            });
+        });
+
         this.setupEventListeners();
     }
 
@@ -131,11 +142,17 @@ export class UIManager {
         const volumeSlider = document.querySelector<HTMLInputElement>('#volume-slider');
 
         if (muteBtn) {
-            muteBtn.addEventListener('click', () => {
+            const handleMuteToggle = () => {
                 if (this.onMuteToggle) {
                     const isMuted = this.onMuteToggle();
                     muteBtn.textContent = isMuted ? '🔇' : '🔊';
                 }
+            };
+
+            muteBtn.addEventListener('click', handleMuteToggle);
+            muteBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleMuteToggle();
             });
         }
 
@@ -146,16 +163,27 @@ export class UIManager {
                     this.onVolumeChange(volume);
                 }
             });
+
+            // Touch support for volume slider
+            volumeSlider.addEventListener('touchmove', (e) => {
+                e.stopPropagation(); // Prevent joystick interference
+            });
         }
 
         // Reset Camera
         const resetBtn = document.querySelector<HTMLButtonElement>('#reset-camera');
         if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
+            const handleReset = () => {
                 if (this.onResetCamera) {
                     this.onResetCamera();
                 }
                 resetBtn.blur();
+            };
+
+            resetBtn.addEventListener('click', handleReset);
+            resetBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleReset();
             });
         }
 
@@ -164,24 +192,39 @@ export class UIManager {
         const avatarDropdown = document.querySelector<HTMLDivElement>('#avatar-dropdown');
 
         if (avatarBtn && avatarDropdown) {
-            avatarBtn.addEventListener('click', (e) => {
+            const toggleDropdown = (e: Event) => {
                 e.stopPropagation();
+                e.preventDefault();
                 avatarDropdown.classList.toggle('active');
-            });
+            };
 
+            avatarBtn.addEventListener('click', toggleDropdown);
+            avatarBtn.addEventListener('touchend', toggleDropdown);
+
+            // Close on click/tap outside
             window.addEventListener('click', () => {
                 avatarDropdown.classList.remove('active');
+            });
+            window.addEventListener('touchend', (e) => {
+                const target = e.target as HTMLElement;
+                if (!avatarDropdown.contains(target) && target !== avatarBtn) {
+                    avatarDropdown.classList.remove('active');
+                }
             });
         }
 
         document.querySelectorAll('.avatar-option').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const filename = (e.target as HTMLElement).dataset.model;
+            const handleAvatarSelect = (e: Event) => {
+                e.preventDefault();
+                const filename = (e.currentTarget as HTMLElement).dataset.model;
                 if (filename && this.onAvatarSelect) {
                     this.onAvatarSelect(filename);
                     if (avatarDropdown) avatarDropdown.classList.remove('active');
                 }
-            });
+            };
+
+            btn.addEventListener('click', handleAvatarSelect);
+            btn.addEventListener('touchend', handleAvatarSelect);
         });
 
         // Modal Close Logic
