@@ -15,6 +15,13 @@
   min-width: 250px;
 }
 
+/* Hide PC controls on mobile and tablet */
+@media (max-width: 1024px), (pointer: coarse) {
+  #controls-info {
+    display: none !important;
+  }
+}
+
 #controls-info h2 {
   margin: 0 0 15px 0;
   font-size: 18px;

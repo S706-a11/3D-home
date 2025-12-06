@@ -63,6 +63,7 @@ export class MobileControls {
         base.style.border = '2px solid rgba(255, 255, 255, 0.5)';
         base.style.touchAction = 'none';
         base.style.pointerEvents = 'none';
+        base.style.zIndex = '9999';
         base.id = 'joystick-base';
         return base;
     }
@@ -82,6 +83,7 @@ export class MobileControls {
         stick.style.border = '2px solid rgba(255, 255, 255, 1)';
         stick.style.touchAction = 'none';
         stick.style.pointerEvents = 'none';
+        stick.style.zIndex = '10000';
         stick.id = 'joystick-stick';
         return stick;
     }
@@ -106,6 +108,7 @@ export class MobileControls {
         button.style.fontSize = '24px';
         button.style.color = 'white';
         button.style.touchAction = 'none';
+        button.style.zIndex = '9999';
         button.id = 'jump-button';
         return button;
     }
@@ -129,6 +132,7 @@ export class MobileControls {
         button.style.justifyContent = 'center';
         button.style.fontSize = '24px';
         button.style.touchAction = 'none';
+        button.style.zIndex = '9999';
         button.id = 'run-button';
         return button;
     }
@@ -267,15 +271,29 @@ export class MobileControls {
 
     /**
      * Hide controls on desktop (auto-detect)
+     * Uses pointer: coarse to detect touch devices (works for phones, tablets, iPad)
      */
     private hideControlsOnDesktop(): void {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Use pointer: coarse to detect touch-primary devices (more reliable than user agent)
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        // Also check screen width as fallback
+        const isSmallScreen = window.innerWidth <= 1024;
+        // Check for touch support
+        const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        const isMobile = isTouchDevice || (isSmallScreen && hasTouchSupport);
 
         if (!isMobile) {
             this.joystickBase.style.display = 'none';
             this.joystickStick.style.display = 'none';
             this.jumpButton.style.display = 'none';
             this.runButton.style.display = 'none';
+        } else {
+            // Ensure controls are visible on mobile
+            this.joystickBase.style.display = 'block';
+            this.joystickStick.style.display = 'block';
+            this.jumpButton.style.display = 'flex';
+            this.runButton.style.display = 'flex';
         }
     }
 
