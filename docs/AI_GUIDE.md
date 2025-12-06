@@ -10,6 +10,29 @@ This guide helps AI assistants understand how to work with this Three.js codebas
 
 ---
 
+## Context7 Integration
+
+> [!IMPORTANT]
+> **Always use Context7 MCP tools** when working on this codebase for:
+> - **Code generation**: Use Context7 to fetch up-to-date API references and examples
+> - **Setup/configuration steps**: Query Context7 for library-specific setup instructions
+> - **Library/API documentation**: Automatically resolve library IDs and retrieve docs
+>
+> **How it works**:
+> 1. Use `mcp0_resolve-library-id` to find the correct Context7-compatible library ID (e.g., `/reactjs/react.dev`, `/threejs/three.js`)
+> 2. Use `mcp0_get-library-docs` with the resolved ID and specific topic to fetch relevant documentation
+> 3. Apply the documentation to generate accurate, up-to-date code
+>
+> **You do NOT need to wait for explicit requests** - proactively use Context7 whenever you need:
+> - Three.js API documentation or examples
+> - TypeScript configuration guidance
+> - Vite setup instructions
+> - Any library-specific implementation details
+>
+> This ensures code follows current best practices and uses the latest API patterns.
+
+---
+
 ## Code Style & Conventions
 
 ### File Organization
