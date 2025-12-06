@@ -9,6 +9,7 @@ export class InteractionManager {
     private stands: DisplayStand[] = [];
     private interactionDistance: number = 3.0;
     private hoveredStand: DisplayStand | null = null;
+    private touchStartPos: { x: number; y: number } | null = null;
 
     constructor(camera: THREE.Camera, character: THREE.Object3D) {
         this.raycaster = new THREE.Raycaster();
@@ -16,8 +17,13 @@ export class InteractionManager {
         this.camera = camera;
         this.character = character;
 
+        // Mouse events for desktop
         window.addEventListener('click', this.handleClick.bind(this));
         window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+
+        // Touch events for mobile
+        window.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        window.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
     }
 
     public addStand(stand: DisplayStand): void {
@@ -178,5 +184,74 @@ export class InteractionManager {
                 modal.classList.add('active');
             }, 10);
         }
+    }
+
+    /**
+     * Handle touch start - record initial touch position
+     */
+    private handleTouchStart(event: TouchEvent): void {
+        if (event.touches.length === 1) {
+            const touch = event.touches[0];
+            this.touchStartPos = { x: touch.clientX, y: touch.clientY };
+        }
+    }
+
+    /**
+     * Handle touch end - check if it was a tap (not a drag) and interact with project
+     */
+    private handleTouchEnd(event: TouchEvent): void {
+        if (!this.touchStartPos) return;
+
+        const touch = event.changedTouches[0];
+        const target = touch.target as HTMLElement;
+
+        // Ignore taps on mobile control buttons
+        if (target.id === 'jump-button' || target.id === 'run-button' ||
+            target.id === 'joystick-base' || target.id === 'joystick-stick') {
+            this.touchStartPos = null;
+            return;
+        }
+
+        // Calculate distance moved
+        const dx = touch.clientX - this.touchStartPos.x;
+        const dy = touch.clientY - this.touchStartPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Only trigger if it was a tap (not a drag)
+        const tapThreshold = 15; // pixels
+        if (distance < tapThreshold) {
+            // Convert touch position to normalized coordinates
+            const canvas = document.querySelector('canvas');
+            if (canvas) {
+                const rect = canvas.getBoundingClientRect();
+                this.mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+                this.mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+            } else {
+                this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+            }
+
+            // Perform raycast
+            this.raycaster.setFromCamera(this.mouse, this.camera);
+            const interactables = this.stands.map(s => s.getInteractable());
+            const intersects = this.raycaster.intersectObjects(interactables);
+
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                const stand = this.stands.find(s => s.getInteractable() === object);
+
+                if (stand) {
+                    const dist = this.character.position.distanceTo(stand.getMesh().position);
+
+                    if (dist <= this.interactionDistance) {
+                        this.showProjectModal(stand.getData());
+                    } else {
+                        console.log("Too far to interact!");
+                    }
+                }
+            }
+        }
+
+        this.touchStartPos = null;
     }
 }

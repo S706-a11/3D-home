@@ -567,3 +567,85 @@
   transform: translateY(-1px);
 }
 
+/* --- Mobile Modal Responsive Styles --- */
+@media (max-width: 768px), (pointer: coarse) {
+  #project-modal {
+    padding: 15px;
+    z-index: 10000; /* Above mobile controls */
+  }
+  
+  .modal-content {
+    width: 95%;
+    max-width: none;
+    max-height: 90vh;
+    border-radius: 16px;
+  }
+  
+  .modal-header {
+    padding: 16px 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .close-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px; /* Minimum touch target size */
+    min-height: 44px;
+    font-size: 1.8rem;
+  }
+  
+  .modal-body {
+    padding: 20px;
+    max-height: 50vh;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+  
+  #project-image {
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+  
+  #project-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .modal-footer {
+    padding: 16px 20px;
+    justify-content: center;
+  }
+  
+  .project-link-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px 28px;
+    font-size: 1.1rem;
+    min-height: 50px; /* Larger touch target */
+    border-radius: 14px;
+    touch-action: manipulation; /* Faster tap response */
+  }
+  
+  .project-link-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+  .modal-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  #project-image {
+    height: 150px;
+  }
+  
+  .modal-body {
+    max-height: 45vh;
+  }
+}

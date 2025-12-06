@@ -187,21 +187,55 @@ export class UIManager {
         // Modal Close Logic
         const modal = document.getElementById('project-modal');
         const closeBtn = document.querySelector('.close-btn');
+        const projectLink = document.getElementById('project-link');
 
-        if (modal && closeBtn) {
-            closeBtn.addEventListener('click', () => {
+        const closeModal = () => {
+            if (modal) {
                 modal.classList.remove('active');
                 setTimeout(() => {
                     modal.style.display = 'none';
                 }, 300);
+            }
+        };
+
+        if (modal && closeBtn) {
+            // Close button - click and touch
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal();
             });
 
-            window.addEventListener('click', (e) => {
+            closeBtn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal();
+            });
+
+            // Click on backdrop to close
+            modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
-                    modal.classList.remove('active');
-                    setTimeout(() => {
-                        modal.style.display = 'none';
-                    }, 300);
+                    closeModal();
+                }
+            });
+
+            // Touch on backdrop to close
+            modal.addEventListener('touchend', (e) => {
+                if (e.target === modal) {
+                    e.preventDefault();
+                    closeModal();
+                }
+            });
+        }
+
+        // Make project link work on mobile
+        if (projectLink) {
+            projectLink.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+                // Let the default link behavior work
+                const href = projectLink.getAttribute('href');
+                if (href && href !== '#') {
+                    window.open(href, '_blank');
                 }
             });
         }
