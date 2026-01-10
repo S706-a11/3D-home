@@ -119,7 +119,8 @@ export class UIManager {
         // Create credits element dynamically to ensure visibility
         const credits = document.createElement('div');
         credits.id = 'credits';
-        credits.innerHTML = 'Made by <a href="https://github.com/S706-a11" target="_blank">@Got</a> • Assets by <a href="https://kenney.nl" target="_blank">Kenney</a> • Skybox by <a href="https://polyhaven.com" target="_blank">Poly Haven</a>';
+        // credits.innerHTML = 'Made by <a href="https://github.com/S706-a11" target="_blank">@Got</a> • Assets by <a href="https://kenney.nl" target="_blank">Kenney</a> • Skybox by <a href="https://polyhaven.com" target="_blank">Poly Haven</a>';
+        credits.innerHTML = 'TEST CICD';
         document.body.appendChild(credits);
 
         // Add touch support for credits links
